@@ -38,10 +38,10 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2-beta
       - name: Install firebase-tools
-        run: npm install -g firebase-tools
+        run: npm install firebase-tools
       - name: Upload release to Firebase App Distribution
         run: |
-          firebase appdistribution:distribute app/build/outputs/apk/release/app-release.apk \
+          npx firebase appdistribution:distribute app/build/outputs/apk/release/app-release.apk \
             --groups "Default" \
             --app ${{ secrets.FIREBASE_APP_ID }} \
             --token ${{ secrets.FIREBASE_TOKEN }} \
