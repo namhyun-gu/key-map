@@ -1,8 +1,8 @@
 object Versions {
     val minSdk = 23
     val compileSdk = 29
-    val version = "1.0.2"
-    val versionCode = 3
+    val version = "1.1.0"
+    val versionCode = 4
 
     // Plugins
     const val kotlin = "1.3.72"
