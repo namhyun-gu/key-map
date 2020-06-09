@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_add_data">데이터 추가</string>
+    <string name="hint_name">이름</string>
+    <string name="hint_key">키</string>
+    <string name="msg_fetch_keys_error">키를 가져올 수 없음</string>
+    <string name="msg_name_required">이름 필드값 필요</string>
+    <string name="msg_key_required">키 필드값 필요</string>
+    <string name="msg_key_saved">키 저장됨</string>
+    <string name="msg_key_not_saved">키 저장에 실패</string>
+    <string name="dialog_delete_title">\'%1$s\' 키 삭제</string>
+</resources>
