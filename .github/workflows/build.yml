@@ -41,8 +41,4 @@ jobs:
         run: npm install firebase-tools
       - name: Upload release to Firebase App Distribution
         run: |
-          npx firebase appdistribution:distribute app/build/outputs/apk/release/app-release.apk \
-            --groups "Default" \
-            --app ${{ secrets.FIREBASE_APP_ID }} \
-            --token ${{ secrets.FIREBASE_TOKEN }} \
-            --debug
+          npx firebase appdistribution:distribute app/build/outputs/apk/release/app-release.apk --token ${{ secrets.FIREBASE_TOKEN }} --app ${{ secrets.FIREBASE_APP_ID }}
