@@ -10,10 +10,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: |
-        echo "${{ secrets.RELEASE_KEYSTORE }}" > release.keystore.asc
-        gpg -d --passphrase "${{ secrets.RELEASE_KEYSTORE_PASSPHRASE }}" --batch release.keystore.asc > app/release.keystore
-        echo "${{ secrets.GOOGLE_SERVICES }}" > app/google-services.json.b64
-        base -d app/google-services.json.b64 > app/google-services.json
+          echo "${{ secrets.RELEASE_KEYSTORE }}" > release.keystore.asc
+          gpg -d --passphrase "${{ secrets.RELEASE_KEYSTORE_PASSPHRASE }}" --batch release.keystore.asc > app/release.keystore
+          echo "${{ secrets.GOOGLE_SERVICES }}" > app/google-services.json.b64
+          base -d app/google-services.json.b64 > app/google-services.json
       - name: Set up Java
         uses: actions/setup-java@v1
         with:
