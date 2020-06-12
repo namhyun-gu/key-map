@@ -28,7 +28,7 @@ interface GeocodingService {
       @Header("X-NCP-APIGW-API-KEY-ID") clientId: String,
       @Header("X-NCP-APIGW-API-KEY") clientSecret: String,
       @Query("coords") coords: String,
-      @Query("orders") orders: String = "roadaddr",
+      @Query("orders") orders: String = "roadaddr,legalcode,admcode",
       @Query("output") output: String = "json"
     ): Call<GeocodingResponse>
 }

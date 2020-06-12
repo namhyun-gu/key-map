@@ -85,7 +85,9 @@ dependencies {
     kapt("androidx.hilt:hilt-compiler:${Versions.daggerHiltVersion}")
 
     // moshi
+    implementation("com.squareup.moshi:moshi:${Versions.moshiVersion}")
     implementation("com.squareup.moshi:moshi-kotlin:${Versions.moshiVersion}")
+    implementation("com.squareup.moshi:moshi-adapters:${Versions.moshiVersion}")
     implementation("com.squareup.moshi:moshi-kotlin-codegen:${Versions.moshiVersion}")
     implementation("com.squareup.retrofit2:converter-moshi:${Versions.moshiConverterVersion}")
 

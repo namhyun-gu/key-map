@@ -22,12 +22,13 @@ import com.skydoves.sandwich.onException
 import com.skydoves.sandwich.onSuccess
 import dev.namhyun.geokey.model.LocationData
 import dev.namhyun.geokey.network.GeocodingClient
-import javax.inject.Inject
+import dev.namhyun.geokey.util.getAddress
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 class MainRepository @Inject constructor(
-  val geocodingClient: GeocodingClient
+    val geocodingClient: GeocodingClient
 ) {
     suspend fun reverseGeocoding(lat: Double, lon: Double, error: (String) -> Unit) =
         withContext(Dispatchers.IO) {
@@ -35,8 +36,9 @@ class MainRepository @Inject constructor(
             geocodingClient.reverseGeocode(lat, lon) {
                 it.onSuccess {
                     data?.let { response ->
+                        val address = response.getAddress() ?: ""
                         liveData.postValue(
-                            LocationData(response.concat(0)!!, lat, lon)
+                            LocationData(address, lat, lon)
                         )
                     }
                 }

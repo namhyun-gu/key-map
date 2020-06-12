@@ -15,17 +15,29 @@
  */
 package dev.namhyun.geokey.di
 
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
+import dev.namhyun.geokey.model.AdmCodeResult
+import dev.namhyun.geokey.model.LegalCodeResult
+import dev.namhyun.geokey.model.OperationName
+import dev.namhyun.geokey.model.Result
+import dev.namhyun.geokey.model.RoadAddrResult
 import dev.namhyun.geokey.network.GeocodingClient
 import dev.namhyun.geokey.network.GeocodingService
-import javax.inject.Named
+import javax.inject.Qualifier
 import javax.inject.Singleton
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class GeocodingRetrofit
 
 @Module
 @InstallIn(ApplicationComponent::class)
@@ -40,18 +52,32 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    @Named("geocoding")
-    fun provideGeocodingRetrofit(okHttpClient: OkHttpClient): Retrofit {
-        return Retrofit.Builder()
-            .client(okHttpClient)
-            .baseUrl("https://naveropenapi.apigw.ntruss.com")
-            .addConverterFactory(MoshiConverterFactory.create())
+    fun provideGeocodingMoshi(): Moshi {
+        return Moshi.Builder()
+            .add(
+                PolymorphicJsonAdapterFactory.of(Result::class.java, "name")
+                    .withSubtype(LegalCodeResult::class.java, OperationName.legalcode.name)
+                    .withSubtype(AdmCodeResult::class.java, OperationName.admcode.name)
+                    .withSubtype(RoadAddrResult::class.java, OperationName.roadaddr.name)
+            )
+            .add(KotlinJsonAdapterFactory())
             .build()
     }
 
     @Provides
     @Singleton
-    fun provideGeocodingService(@Named("geocoding") retrofit: Retrofit): GeocodingService {
+    @GeocodingRetrofit
+    fun provideGeocodingRetrofit(okHttpClient: OkHttpClient, moshi: Moshi): Retrofit {
+        return Retrofit.Builder()
+            .client(okHttpClient)
+            .baseUrl("https://naveropenapi.apigw.ntruss.com")
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideGeocodingService(@GeocodingRetrofit retrofit: Retrofit): GeocodingService {
         return retrofit.create(GeocodingService::class.java)
     }
 

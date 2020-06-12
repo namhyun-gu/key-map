@@ -21,35 +21,7 @@ import com.squareup.moshi.JsonClass
 data class GeocodingResponse(
   val status: Status,
   val results: List<Result>
-) {
-    fun concat(idx: Int): String? {
-        val result = results[idx]
-        val builder = StringBuilder()
-
-        val region = result.region
-        val land = result.land
-
-        if (region.area1.name.isNotEmpty()) {
-            builder.append(region.area1.name)
-        }
-        if (region.area2.name.isNotEmpty()) {
-            builder.append(" " + (region.area2.name))
-        }
-        if (land.name.isNotEmpty()) {
-            builder.append(" " + land.name)
-        }
-        if (land.number1.isNotEmpty()) {
-            builder.append(" " + land.number1)
-        }
-        if (region.area3.name.isNotEmpty()) {
-            val building =
-                if (land.addition0.value.isNotEmpty()) ", ${land.addition0.value}"
-                else ""
-            builder.append(" (${region.area3.name}$building)")
-        }
-        return builder.toString()
-    }
-}
+)
 
 @JsonClass(generateAdapter = true)
 data class Status(
@@ -58,8 +30,19 @@ data class Status(
   val message: String
 )
 
-@JsonClass(generateAdapter = true)
-data class Result(val name: String, val region: Region, val land: Land)
+enum class OperationName {
+    legalcode,
+    admcode,
+    roadaddr
+}
+
+sealed class Result(val name: OperationName)
+
+data class LegalCodeResult(val region: Region) : Result(OperationName.legalcode)
+
+data class AdmCodeResult(val region: Region) : Result(OperationName.admcode)
+
+data class RoadAddrResult(val region: Region, val land: Land) : Result(OperationName.roadaddr)
 
 @JsonClass(generateAdapter = true)
 data class Region(
