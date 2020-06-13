@@ -27,3 +27,11 @@ fun String.runCommand(workingDir: File = File("./")): String {
     proc.waitFor(1, TimeUnit.MINUTES)
     return proc.inputStream.bufferedReader().readText().trim()
 }
+
+fun getVersionCode(): Int {
+    return if (System.getenv("CI") == "true") {
+        System.getenv("GITHUB_RUN_NUMBER").toInt()
+    } else {
+        "git rev-list --count HEAD".runCommand().toInt()
+    }
+}

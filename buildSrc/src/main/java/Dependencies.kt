@@ -17,7 +17,7 @@ object Versions {
     const val minSdk = 23
     const val compileSdk = 29
     val version = "git describe --tags --abbrev=0".runCommand()
-    val versionCode = "git rev-list --count HEAD".runCommand().toInt()
+    val versionCode = getVersionCode()
 
     // Plugins
     const val kotlin = "1.3.72"
