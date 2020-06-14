@@ -9,4 +9,5 @@
     <string name="msg_key_saved">키 저장됨</string>
     <string name="msg_key_not_saved">키 저장에 실패</string>
     <string name="dialog_delete_title">\'%1$s\' 키 삭제</string>
+    <string name="msg_not_connected">인터넷에 연결되지 않았습니다</string>
 </resources>

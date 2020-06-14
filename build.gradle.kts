@@ -17,9 +17,8 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven {
-            url = uri("https://androidx.dev/snapshots/builds/6543454/artifacts/repository/")
-        }
+        maven("https://navercorp.bintray.com/maps")
+        maven("https://androidx.dev/snapshots/builds/6543454/artifacts/repository/")
     }
 }
 

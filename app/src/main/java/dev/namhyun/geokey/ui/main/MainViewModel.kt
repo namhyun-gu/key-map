@@ -22,11 +22,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.switchMap
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.geometry.LatLngBounds
 import dev.namhyun.geokey.R
 import dev.namhyun.geokey.model.Key
 import dev.namhyun.geokey.model.LocationLiveData
 import dev.namhyun.geokey.model.NetworkLiveData
 import dev.namhyun.geokey.repository.MainRepository
+import dev.namhyun.geokey.util.KeyUtil
+import dev.namhyun.geokey.util.latLng
 import dev.namhyun.geokey.util.launchOnViewModelScope
 import timber.log.Timber
 
@@ -47,6 +51,7 @@ class MainViewModel @ViewModelInject constructor(
 
     val networkData = NetworkLiveData(application)
     val keyData = MutableLiveData<List<Pair<String, Key>>>()
+    val markerData = MutableLiveData<Map<LatLng, List<Key>>>()
     val toastData = MutableLiveData<Int>()
 
     init {
@@ -66,6 +71,23 @@ class MainViewModel @ViewModelInject constructor(
             } else {
                 keyData.value = emptyList()
             }
+        }
+    }
+
+    fun updateMarker(region: Array<LatLng>) {
+        val bounds = LatLngBounds.Builder().apply {
+            for (idx in 1..4) {
+                include(region[idx])
+            }
+        }.build()
+
+        val keys = keyData.value
+        if (keys != null) {
+            val keysInBounds = keys
+                .map { it.second }
+                .filter { bounds.contains(it.latLng) }
+            val nearKeys = KeyUtil.collectNearKeys(keysInBounds)
+            markerData.value = nearKeys
         }
     }
 

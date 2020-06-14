@@ -30,18 +30,28 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.CameraUpdate
+import com.naver.maps.map.MapFragment
+import com.naver.maps.map.NaverMap
+import com.naver.maps.map.OnMapReadyCallback
+import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.overlay.OverlayImage
 import dagger.hilt.android.AndroidEntryPoint
 import dev.namhyun.geokey.R
+import dev.namhyun.geokey.model.Key
 import dev.namhyun.geokey.ui.adapter.KeyAdapter
 import dev.namhyun.geokey.ui.adddata.AddDataActivity
 import dev.namhyun.geokey.ui.adddata.AddDataActivity.Companion.EXTRA_LOCATION_DATA
 import kotlinx.android.synthetic.main.activity_main.*
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(R.layout.activity_main) {
+class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallback {
     val viewModel by viewModels<MainViewModel>()
+    val mapMarkers: MutableList<Marker> = mutableListOf()
 
     lateinit var keyAdapter: KeyAdapter
+    lateinit var naverMap: NaverMap
 
     val requestLocation = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
@@ -50,7 +60,9 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         if (isGranted) {
             viewModel.locationData.observe(this, Observer {
                 tv_current_location.text = it.address
-                keyAdapter.sort(it)
+                keyAdapter.setLocation(it)
+                naverMap.locationOverlay.position = LatLng(it.lat, it.lon)
+                naverMap.moveCamera(CameraUpdate.scrollTo(LatLng(it.lat, it.lon)))
             })
         } else {
             Toast.makeText(this, "Required location permission", Toast.LENGTH_SHORT).show()
@@ -71,6 +83,10 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
         viewModel.networkData.observe(this, Observer {
             layout_not_connected.visibility = if (it) View.GONE else View.VISIBLE
+        })
+
+        viewModel.markerData.observe(this, Observer {
+            updateMarker(it)
         })
     }
 
@@ -108,6 +124,9 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         list_keys.layoutManager = LinearLayoutManager(this)
         list_keys.adapter = keyAdapter
         list_keys.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
+
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.map_fragment) as MapFragment
+        mapFragment.getMapAsync(this)
     }
 
     private fun buildDeleteDialog(name: String, onDelete: () -> Unit): AlertDialog {
@@ -125,5 +144,33 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             }
         }
         return builder.create()
+    }
+
+    private fun updateMarker(keys: Map<LatLng, List<Key>>) {
+        if (mapMarkers.isNotEmpty()) {
+            mapMarkers.forEach { it.map = null }
+            mapMarkers.clear()
+        }
+
+        keys.forEach { (latLng, keys) ->
+            val marker = Marker().apply {
+                position = latLng
+                map = naverMap
+                icon = OverlayImage.fromResource(R.drawable.ic_place)
+            }
+            marker.setOnClickListener {
+                true
+            }
+            mapMarkers.add(marker)
+        }
+    }
+
+    override fun onMapReady(map: NaverMap) {
+        naverMap = map
+        map.setLayerGroupEnabled(NaverMap.LAYER_GROUP_BUILDING, true)
+        map.locationOverlay.isVisible = true
+        map.addOnCameraIdleListener {
+            viewModel.updateMarker(naverMap.contentRegion)
+        }
     }
 }

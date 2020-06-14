@@ -16,6 +16,7 @@
 package dev.namhyun.geokey
 
 import android.app.Application
+import com.naver.maps.map.NaverMapSdk
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 
@@ -26,5 +27,7 @@ class GeoKeyApp : Application() {
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
+        NaverMapSdk.getInstance(this).client =
+            NaverMapSdk.NaverCloudPlatformClient(BuildConfig.NCP_CLIENT_ID)
     }
 }

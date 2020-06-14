@@ -10,4 +10,5 @@
     <string name="msg_key_saved">Key saved</string>
     <string name="msg_key_not_saved">Key not saved</string>
     <string name="dialog_delete_title">Delete key \'%1$s\'</string>
+    <string name="msg_not_connected">Not connected internet</string>
 </resources>

@@ -15,7 +15,6 @@
  */
 package dev.namhyun.geokey.ui.adapter
 
-import android.location.Location
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +22,8 @@ import androidx.recyclerview.widget.RecyclerView
 import dev.namhyun.geokey.R
 import dev.namhyun.geokey.model.Key
 import dev.namhyun.geokey.model.LocationData
+import dev.namhyun.geokey.util.distanceTo
+import dev.namhyun.geokey.util.meter
 import kotlinx.android.synthetic.main.item_key.view.*
 
 class KeyAdapter(val onItemDelete: (String, Key) -> Unit) :
@@ -43,6 +44,9 @@ class KeyAdapter(val onItemDelete: (String, Key) -> Unit) :
             tv_name.text = item.name
             tv_key.text = item.key
             tv_location.text = item.address
+            if (currentLocation != null) {
+                tv_near_by.text = item.distanceTo(currentLocation!!).meter()
+            }
             btn_delete.setOnClickListener {
                 onItemDelete(id, item)
             }
@@ -53,36 +57,22 @@ class KeyAdapter(val onItemDelete: (String, Key) -> Unit) :
         items.clear()
         items.addAll(keys)
         if (currentLocation != null) {
-            sort()
+            sortByLocation()
         }
         notifyDataSetChanged()
     }
 
-    private fun sort() {
+    private fun sortByLocation() {
         items.sortWith(Comparator { o1, o2 ->
-            val current = Location("").apply {
-                latitude = currentLocation!!.lat
-                longitude = currentLocation!!.lon
-            }
-            val loc1 = Location("").apply {
-                val key = o1.second
-                latitude = key.lat
-                longitude = key.lon
-            }
-            val dis1 = current.distanceTo(loc1)
-            val loc2 = Location("").apply {
-                val key = o2.second
-                latitude = key.lat
-                longitude = key.lon
-            }
-            val dis2 = current.distanceTo(loc2)
+            val dis1 = o1.second.distanceTo(currentLocation!!)
+            val dis2 = o2.second.distanceTo(currentLocation!!)
             dis1.compareTo(dis2)
         })
     }
 
-    fun sort(location: LocationData) {
+    fun setLocation(location: LocationData) {
         this.currentLocation = location
-        sort()
+        sortByLocation()
         notifyDataSetChanged()
     }
 

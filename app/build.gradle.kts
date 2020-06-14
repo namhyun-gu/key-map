@@ -106,6 +106,9 @@ dependencies {
     implementation("com.google.firebase:firebase-config-ktx:19.1.4")
     implementation("com.google.firebase:firebase-crashlytics:17.0.1")
 
+    // Naver Map
+    implementation("com.naver.maps:map-sdk:3.8.0")
+
     // Debugging
     implementation("com.jakewharton.timber:timber:4.7.1")
 

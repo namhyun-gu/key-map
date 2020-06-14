@@ -22,8 +22,7 @@ import dev.namhyun.geokey.model.RoadAddrResult
 
 fun GeocodingResponse.getAddress(): String? {
     return if (results.isNotEmpty()) {
-        val result = results[0]
-        when (result) {
+        when (val result = results[0]) {
             is RoadAddrResult -> {
                 val (region, land) = result
                 val builder = StringBuilder()
