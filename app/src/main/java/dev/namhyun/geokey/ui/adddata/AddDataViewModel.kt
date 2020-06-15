@@ -19,6 +19,7 @@ import android.app.Application
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import dev.namhyun.geokey.R
@@ -34,7 +35,7 @@ class AddDataViewModel @ViewModelInject constructor(
     val toastData = MutableLiveData<Int>()
     val onSavedData = MutableLiveData<Boolean>()
 
-    fun writeKey(location: LocationData, name: String, key: String) {
+    fun writeKey(id: String?, location: LocationData, name: String, key: String) {
         val db = Firebase.firestore
         if (name.isBlank()) {
             toastData.value = R.string.msg_name_required
@@ -51,16 +52,18 @@ class AddDataViewModel @ViewModelInject constructor(
             lon = location.lon,
             address = location.address
         )
-        db.collection("keys")
-            .add(data)
-            .addOnSuccessListener {
-                toastData.value = R.string.msg_key_saved
-                onSavedData.value = true
-            }
-            .addOnFailureListener { e ->
-                Timber.e(e)
-                toastData.value = R.string.msg_key_not_saved
-                onSavedData.value = false
-            }
+        val task: Task<out Any> = if (id == null) {
+            db.collection("keys").add(data)
+        } else {
+            db.collection("keys").document(id).set(data)
+        }
+        task.addOnSuccessListener {
+            toastData.value = R.string.msg_key_saved
+            onSavedData.value = true
+        }.addOnFailureListener { e ->
+            Timber.e(e)
+            toastData.value = R.string.msg_key_not_saved
+            onSavedData.value = false
+        }
     }
 }

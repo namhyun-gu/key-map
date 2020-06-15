@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import dagger.hilt.android.AndroidEntryPoint
 import dev.namhyun.geokey.R
+import dev.namhyun.geokey.model.Key
 import dev.namhyun.geokey.model.LocationData
 import kotlinx.android.synthetic.main.activity_add_data.*
 
@@ -30,6 +31,8 @@ import kotlinx.android.synthetic.main.activity_add_data.*
 class AddDataActivity : AppCompatActivity(R.layout.activity_add_data) {
     val viewModel by viewModels<AddDataViewModel>()
     var location: LocationData? = null
+    var key: Key? = null
+    var keyId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +54,7 @@ class AddDataActivity : AppCompatActivity(R.layout.activity_add_data) {
             fab.isEnabled = false
             val name = edit_name.editText!!.text.toString()
             val key = edit_key.editText!!.text.toString()
-            viewModel.writeKey(location!!, name, key)
+            viewModel.writeKey(keyId, location!!, name, key)
         }
     }
 
@@ -60,6 +63,13 @@ class AddDataActivity : AppCompatActivity(R.layout.activity_add_data) {
         if (intent.hasExtra(EXTRA_LOCATION_DATA)) {
             location = intent.getParcelableExtra(EXTRA_LOCATION_DATA)
             tv_current_location.text = location!!.address
+        }
+        if (intent.hasExtra(EXTRA_KEY_ID)) {
+            keyId = intent.getStringExtra(EXTRA_KEY_ID)
+            key = intent.getParcelableExtra(EXTRA_KEY_DATA)
+            toolbar.title = getString(R.string.title_edit_data)
+            edit_name.editText!!.setText(key!!.name)
+            edit_key.editText!!.setText(key!!.key)
         }
     }
 
@@ -74,6 +84,8 @@ class AddDataActivity : AppCompatActivity(R.layout.activity_add_data) {
     }
 
     companion object {
+        const val EXTRA_KEY_ID = "key_id"
+        const val EXTRA_KEY_DATA = "key_data"
         const val EXTRA_LOCATION_DATA = "location_data"
     }
 }

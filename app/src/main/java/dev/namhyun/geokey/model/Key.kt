@@ -15,12 +15,45 @@
  */
 package dev.namhyun.geokey.model
 
+import android.os.Parcel
+import android.os.Parcelable
+
 data class Key(
   val name: String,
   val key: String,
   val lat: Double,
   val lon: Double,
   val address: String
-) {
+) : Parcelable {
     constructor() : this("", "", 0.0, 0.0, "")
+
+    constructor(parcel: Parcel) : this(
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readDouble(),
+        parcel.readDouble(),
+        parcel.readString()!!
+    )
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(name)
+        parcel.writeString(key)
+        parcel.writeDouble(lat)
+        parcel.writeDouble(lon)
+        parcel.writeString(address)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<Key> {
+        override fun createFromParcel(parcel: Parcel): Key {
+            return Key(parcel)
+        }
+
+        override fun newArray(size: Int): Array<Key?> {
+            return arrayOfNulls(size)
+        }
+    }
 }

@@ -26,7 +26,16 @@ import dev.namhyun.geokey.util.distanceTo
 import dev.namhyun.geokey.util.meter
 import kotlinx.android.synthetic.main.item_key.view.*
 
-class KeyAdapter(val onItemDelete: (String, Key) -> Unit) :
+interface ItemEventListener {
+
+    fun onItemSelected(id: String, key: Key)
+
+    fun onItemDelete(id: String, key: Key)
+}
+
+class KeyAdapter(
+  private val itemEventListener: ItemEventListener
+) :
     RecyclerView.Adapter<KeyAdapter.KeyViewHolder>() {
     val items = mutableListOf<Pair<String, Key>>()
     var currentLocation: LocationData? = null
@@ -48,7 +57,10 @@ class KeyAdapter(val onItemDelete: (String, Key) -> Unit) :
                 tv_near_by.text = item.distanceTo(currentLocation!!).meter()
             }
             btn_delete.setOnClickListener {
-                onItemDelete(id, item)
+                itemEventListener.onItemDelete(id, item)
+            }
+            setOnClickListener {
+                itemEventListener.onItemSelected(id, item)
             }
         }
     }

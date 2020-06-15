@@ -35,6 +35,9 @@ fun Key.distanceTo(location: LocationData): Float {
 val Key.latLng: LatLng
     get() = LatLng(lat, lon)
 
+val Key.locationData: LocationData
+    get() = LocationData(address, lat, lon)
+
 object KeyUtil {
 
     fun collectNearKeys(keys: List<Key>): Map<LatLng, List<Key>> {

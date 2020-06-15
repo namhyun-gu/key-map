@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="title_add_data">데이터 추가</string>
+    <string name="title_edit_data">데이터 편집</string>
     <string name="hint_name">이름</string>
     <string name="hint_key">키</string>
     <string name="msg_fetch_keys_error">키를 가져올 수 없음</string>

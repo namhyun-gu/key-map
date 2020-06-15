@@ -40,9 +40,15 @@ import com.naver.maps.map.overlay.OverlayImage
 import dagger.hilt.android.AndroidEntryPoint
 import dev.namhyun.geokey.R
 import dev.namhyun.geokey.model.Key
+import dev.namhyun.geokey.model.LocationData
+import dev.namhyun.geokey.ui.adapter.ItemEventListener
 import dev.namhyun.geokey.ui.adapter.KeyAdapter
 import dev.namhyun.geokey.ui.adddata.AddDataActivity
+import dev.namhyun.geokey.ui.adddata.AddDataActivity.Companion.EXTRA_KEY_DATA
+import dev.namhyun.geokey.ui.adddata.AddDataActivity.Companion.EXTRA_KEY_ID
 import dev.namhyun.geokey.ui.adddata.AddDataActivity.Companion.EXTRA_LOCATION_DATA
+import dev.namhyun.geokey.util.latLng
+import dev.namhyun.geokey.util.locationData
 import kotlinx.android.synthetic.main.activity_main.*
 
 @AndroidEntryPoint
@@ -111,22 +117,40 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
         fab.setOnClickListener { view ->
             val location = viewModel.locationData.value
             if (location != null) {
-                val intent = Intent(this, AddDataActivity::class.java)
-                intent.putExtra(EXTRA_LOCATION_DATA, location)
-                startActivity(intent)
+                openAddData(location)
             }
         }
-        keyAdapter = KeyAdapter() { id, item ->
-            buildDeleteDialog(item.name) {
-                viewModel.deleteKey(id)
-            }.show()
-        }
+        keyAdapter = KeyAdapter(object : ItemEventListener {
+            override fun onItemSelected(id: String, key: Key) {
+                openAddData(key.locationData, id, key)
+            }
+
+            override fun onItemDelete(id: String, key: Key) {
+                buildDeleteDialog(key.name) {
+                    viewModel.deleteKey(id)
+                }.show()
+            }
+        })
         list_keys.layoutManager = LinearLayoutManager(this)
         list_keys.adapter = keyAdapter
         list_keys.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
 
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map_fragment) as MapFragment
         mapFragment.getMapAsync(this)
+    }
+
+    private fun openAddData(location: LocationData, keyId: String, key: Key?) {
+        val intent = Intent(this, AddDataActivity::class.java)
+        intent.putExtra(EXTRA_LOCATION_DATA, location)
+        if (keyId.isNotEmpty()) {
+            intent.putExtra(EXTRA_KEY_ID, location)
+            intent.putExtra(EXTRA_KEY_DATA, key)
+        }
+        startActivity(intent)
+    }
+
+    private fun openAddData(location: LocationData) {
+        openAddData(location, "", null)
     }
 
     private fun buildDeleteDialog(name: String, onDelete: () -> Unit): AlertDialog {
