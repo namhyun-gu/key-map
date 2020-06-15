@@ -16,6 +16,7 @@
 package dev.namhyun.geokey
 
 import android.app.Application
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.naver.maps.map.NaverMapSdk
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
@@ -26,6 +27,7 @@ class GeoKeyApp : Application() {
         super.onCreate()
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
+            FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false)
         }
         NaverMapSdk.getInstance(this).client =
             NaverMapSdk.NaverCloudPlatformClient(BuildConfig.NCP_CLIENT_ID)
