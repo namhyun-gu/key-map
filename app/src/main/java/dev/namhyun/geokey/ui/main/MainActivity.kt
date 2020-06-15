@@ -31,6 +31,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.MapFragment
 import com.naver.maps.map.NaverMap
@@ -68,7 +69,14 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
                 tv_current_location.text = it.address
                 keyAdapter.setLocation(it)
                 naverMap.locationOverlay.position = LatLng(it.lat, it.lon)
-                naverMap.moveCamera(CameraUpdate.scrollTo(LatLng(it.lat, it.lon)))
+                naverMap.moveCamera(
+                    CameraUpdate.toCameraPosition(
+                        CameraPosition(
+                            LatLng(it.lat, it.lon),
+                            17.0
+                        )
+                    )
+                )
             })
         } else {
             Toast.makeText(this, "Required location permission", Toast.LENGTH_SHORT).show()
