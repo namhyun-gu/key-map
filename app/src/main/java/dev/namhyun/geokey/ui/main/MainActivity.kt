@@ -42,23 +42,21 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.namhyun.geokey.R
 import dev.namhyun.geokey.model.Key
 import dev.namhyun.geokey.model.LocationData
+import dev.namhyun.geokey.model.Resource
 import dev.namhyun.geokey.ui.adapter.ItemEventListener
 import dev.namhyun.geokey.ui.adapter.KeyAdapter
 import dev.namhyun.geokey.ui.adddata.AddDataActivity
-import dev.namhyun.geokey.ui.adddata.AddDataActivity.Companion.EXTRA_KEY_DATA
 import dev.namhyun.geokey.ui.adddata.AddDataActivity.Companion.EXTRA_KEY_ID
 import dev.namhyun.geokey.ui.adddata.AddDataActivity.Companion.EXTRA_LOCATION_DATA
-import dev.namhyun.geokey.util.latLng
-import dev.namhyun.geokey.util.locationData
 import kotlinx.android.synthetic.main.activity_main.*
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallback {
-    val viewModel by viewModels<MainViewModel>()
-    val mapMarkers: MutableList<Marker> = mutableListOf()
+    private val viewModel by viewModels<MainViewModel>()
+    private val mapMarkers: MutableList<Marker> = mutableListOf()
 
-    lateinit var keyAdapter: KeyAdapter
-    lateinit var naverMap: NaverMap
+    private lateinit var keyAdapter: KeyAdapter
+    private lateinit var naverMap: NaverMap
 
     val requestLocation = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
@@ -88,11 +86,11 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
         super.onCreate(savedInstanceState)
         initViews()
         viewModel.keyData.observe(this, Observer {
-            keyAdapter.addKeys(it)
-        })
-
-        viewModel.toastData.observe(this, Observer {
-            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+            if (it is Resource.Success) {
+                keyAdapter.addKeys(it.data)
+            } else {
+                Toast.makeText(this, R.string.msg_fetch_keys_error, Toast.LENGTH_SHORT).show()
+            }
         })
 
         viewModel.networkData.observe(this, Observer {
@@ -122,7 +120,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
     }
 
     private fun initViews() {
-        fab.setOnClickListener { view ->
+        fab.setOnClickListener {
             val location = viewModel.locationData.value
             if (location != null) {
                 openAddData(location)
@@ -130,7 +128,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
         }
         keyAdapter = KeyAdapter(object : ItemEventListener {
             override fun onItemSelected(id: String, key: Key) {
-                openAddData(key.locationData, id, key)
+                openEditData(id)
             }
 
             override fun onItemDelete(id: String, key: Key) {
@@ -147,18 +145,16 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
         mapFragment.getMapAsync(this)
     }
 
-    private fun openAddData(location: LocationData, keyId: String, key: Key?) {
+    private fun openAddData(location: LocationData) {
         val intent = Intent(this, AddDataActivity::class.java)
         intent.putExtra(EXTRA_LOCATION_DATA, location)
-        if (keyId.isNotEmpty()) {
-            intent.putExtra(EXTRA_KEY_ID, location)
-            intent.putExtra(EXTRA_KEY_DATA, key)
-        }
         startActivity(intent)
     }
 
-    private fun openAddData(location: LocationData) {
-        openAddData(location, "", null)
+    private fun openEditData(keyId: String) {
+        val intent = Intent(this, AddDataActivity::class.java)
+        intent.putExtra(EXTRA_KEY_ID, keyId)
+        startActivity(intent)
     }
 
     private fun buildDeleteDialog(name: String, onDelete: () -> Unit): AlertDialog {
@@ -184,7 +180,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
             mapMarkers.clear()
         }
 
-        keys.forEach { (latLng, keys) ->
+        keys.forEach { (latLng, _) ->
             val marker = Marker().apply {
                 position = latLng
                 map = naverMap

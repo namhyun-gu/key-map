@@ -19,51 +19,60 @@ import android.app.Application
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import com.google.android.gms.tasks.Task
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import androidx.lifecycle.viewModelScope
 import dev.namhyun.geokey.R
+import dev.namhyun.geokey.model.Document
 import dev.namhyun.geokey.model.Key
 import dev.namhyun.geokey.model.LocationData
+import dev.namhyun.geokey.model.Resource
 import dev.namhyun.geokey.repository.AddDataRepository
-import timber.log.Timber
+import kotlinx.coroutines.launch
 
 class AddDataViewModel @ViewModelInject constructor(
   application: Application,
   private val addDataRepository: AddDataRepository
 ) : AndroidViewModel(application) {
+    val keyData = MutableLiveData<Resource<Document<Key>>>()
     val toastData = MutableLiveData<Int>()
     val onSavedData = MutableLiveData<Boolean>()
 
-    fun writeKey(id: String?, location: LocationData, name: String, key: String) {
-        val db = Firebase.firestore
+    fun readKey(id: String) {
+        viewModelScope.launch {
+            keyData.postValue(addDataRepository.readKey(id))
+        }
+    }
+
+    fun createKey(name: String, key: String, location: LocationData) {
+        validData(name, key)
+        val keyData = Key(name = name, key = key, locationData = location)
+        viewModelScope.launch {
+            addDataRepository.createKey(keyData)
+            toastData.value = R.string.msg_key_saved
+            onSavedData.value = true
+        }
+    }
+
+    fun updateKey(id: String, name: String, key: String, location: LocationData) {
+        validData(name, key)
+        val keyData = Key(name = name, key = key, locationData = location)
+        viewModelScope.launch {
+            val updatedId = addDataRepository.updateKey(id, keyData)
+            if (id == updatedId) {
+                toastData.value = R.string.msg_key_saved
+                onSavedData.value = true
+            }
+        }
+    }
+
+    private fun validData(name: String, key: String): Boolean {
         if (name.isBlank()) {
             toastData.value = R.string.msg_name_required
-            return
+            return false
         }
         if (key.isBlank()) {
             toastData.value = R.string.msg_key_required
-            return
+            return false
         }
-        val data = Key(
-            name = name,
-            key = key,
-            lat = location.lat,
-            lon = location.lon,
-            address = location.address
-        )
-        val task: Task<out Any> = if (id == null) {
-            db.collection("keys").add(data)
-        } else {
-            db.collection("keys").document(id).set(data)
-        }
-        task.addOnSuccessListener {
-            toastData.value = R.string.msg_key_saved
-            onSavedData.value = true
-        }.addOnFailureListener { e ->
-            Timber.e(e)
-            toastData.value = R.string.msg_key_not_saved
-            onSavedData.value = false
-        }
+        return true
     }
 }

@@ -20,6 +20,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import dev.namhyun.geokey.R
+import dev.namhyun.geokey.model.Document
 import dev.namhyun.geokey.model.Key
 import dev.namhyun.geokey.model.LocationData
 import dev.namhyun.geokey.util.distanceTo
@@ -37,8 +38,8 @@ class KeyAdapter(
   private val itemEventListener: ItemEventListener
 ) :
     RecyclerView.Adapter<KeyAdapter.KeyViewHolder>() {
-    val items = mutableListOf<Pair<String, Key>>()
-    var currentLocation: LocationData? = null
+    private val items = mutableListOf<Document<Key>>()
+    private var currentLocation: LocationData? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): KeyViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_key, parent, false)
@@ -65,7 +66,7 @@ class KeyAdapter(
         }
     }
 
-    fun addKeys(keys: List<Pair<String, Key>>) {
+    fun addKeys(keys: List<Document<Key>>) {
         items.clear()
         items.addAll(keys)
         if (currentLocation != null) {
@@ -76,8 +77,8 @@ class KeyAdapter(
 
     private fun sortByLocation() {
         items.sortWith(Comparator { o1, o2 ->
-            val dis1 = o1.second.distanceTo(currentLocation!!)
-            val dis2 = o2.second.distanceTo(currentLocation!!)
+            val dis1 = o1.value.distanceTo(currentLocation!!)
+            val dis2 = o2.value.distanceTo(currentLocation!!)
             dis1.compareTo(dis2)
         })
     }

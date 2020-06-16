@@ -20,26 +20,24 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.switchMap
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.geometry.LatLngBounds
-import dev.namhyun.geokey.R
 import dev.namhyun.geokey.model.Key
 import dev.namhyun.geokey.model.LocationLiveData
 import dev.namhyun.geokey.model.NetworkLiveData
+import dev.namhyun.geokey.model.Resource
 import dev.namhyun.geokey.repository.MainRepository
 import dev.namhyun.geokey.util.KeyUtil
 import dev.namhyun.geokey.util.latLng
 import dev.namhyun.geokey.util.launchOnViewModelScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class MainViewModel @ViewModelInject constructor(
   application: Application,
   private val mainRepository: MainRepository
 ) : AndroidViewModel(application) {
-    private val db = Firebase.firestore
-
     private val _locationData = LocationLiveData(application)
     val locationData = _locationData.switchMap {
         launchOnViewModelScope {
@@ -50,29 +48,8 @@ class MainViewModel @ViewModelInject constructor(
     }
 
     val networkData = NetworkLiveData(application)
-    val keyData = MutableLiveData<List<Pair<String, Key>>>()
+    val keyData = mainRepository.readAllKey()
     val markerData = MutableLiveData<Map<LatLng, List<Key>>>()
-    val toastData = MutableLiveData<Int>()
-
-    init {
-        fetchKeys()
-    }
-
-    private fun fetchKeys() {
-        db.collection("keys").addSnapshotListener { snapshot, e ->
-            if (e != null) {
-                toastData.value = R.string.msg_fetch_keys_error
-            }
-
-            if (snapshot != null && !snapshot.isEmpty) {
-                val ids = snapshot.documents.map { it.id }
-                val keys = snapshot.toObjects(Key::class.java)
-                keyData.value = ids.mapIndexed { idx, id -> id to keys[idx] }
-            } else {
-                keyData.value = emptyList()
-            }
-        }
-    }
 
     fun updateMarker(region: Array<LatLng>) {
         val bounds = LatLngBounds.Builder().apply {
@@ -82,9 +59,9 @@ class MainViewModel @ViewModelInject constructor(
         }.build()
 
         val keys = keyData.value
-        if (keys != null) {
-            val keysInBounds = keys
-                .map { it.second }
+        if (keys != null && keys is Resource.Success) {
+            val keysInBounds = keys.data
+                .map { it.value }
                 .filter { bounds.contains(it.latLng) }
             val nearKeys = KeyUtil.collectNearKeys(keysInBounds)
             markerData.value = nearKeys
@@ -92,6 +69,8 @@ class MainViewModel @ViewModelInject constructor(
     }
 
     fun deleteKey(id: String) {
-        db.collection("keys").document(id).delete()
+        viewModelScope.launch {
+            mainRepository.deleteKey(id)
+        }
     }
 }

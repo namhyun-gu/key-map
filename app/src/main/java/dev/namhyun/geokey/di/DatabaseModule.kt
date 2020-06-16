@@ -18,31 +18,18 @@ package dev.namhyun.geokey.di
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityRetainedComponent
-import dagger.hilt.android.scopes.ActivityRetainedScoped
+import dagger.hilt.android.components.ApplicationComponent
 import dev.namhyun.geokey.data.KeyDatabase
-import dev.namhyun.geokey.network.GeocodingClient
-import dev.namhyun.geokey.repository.AddDataRepository
-import dev.namhyun.geokey.repository.MainRepository
+import dev.namhyun.geokey.data.KeyDatabaseImpl
+import javax.inject.Singleton
 
 @Module
-@InstallIn(ActivityRetainedComponent::class)
-object RepositoryModule {
+@InstallIn(ApplicationComponent::class)
+object DatabaseModule {
 
     @Provides
-    @ActivityRetainedScoped
-    fun provideMainRepository(
-      geocodingClient: GeocodingClient,
-      keyDatabase: KeyDatabase
-    ): MainRepository {
-        return MainRepository(geocodingClient, keyDatabase)
-    }
-
-    @Provides
-    @ActivityRetainedScoped
-    fun provideAddDataRepository(
-      keyDatabase: KeyDatabase
-    ): AddDataRepository {
-        return AddDataRepository(keyDatabase)
+    @Singleton
+    fun provideKeyDatabase(): KeyDatabase {
+        return KeyDatabaseImpl()
     }
 }

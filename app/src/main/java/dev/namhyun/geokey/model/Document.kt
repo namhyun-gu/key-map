@@ -13,18 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package dev.namhyun.geokey.repository
+package dev.namhyun.geokey.model
 
-import dev.namhyun.geokey.data.KeyDatabase
-import dev.namhyun.geokey.model.Key
-import javax.inject.Inject
-
-class AddDataRepository @Inject constructor(
-  val keyDatabase: KeyDatabase
-) {
-    suspend fun readKey(id: String) = keyDatabase.readKey(id)
-
-    suspend fun updateKey(id: String, key: Key) = keyDatabase.updateKey(id, key)
-
-    suspend fun createKey(key: Key) = keyDatabase.createKey(key)
-}
+data class Document<T>(val id: String, val value: T)

@@ -20,6 +20,7 @@ import com.skydoves.sandwich.message
 import com.skydoves.sandwich.onError
 import com.skydoves.sandwich.onException
 import com.skydoves.sandwich.onSuccess
+import dev.namhyun.geokey.data.KeyDatabase
 import dev.namhyun.geokey.model.LocationData
 import dev.namhyun.geokey.network.GeocodingClient
 import dev.namhyun.geokey.util.getAddress
@@ -28,7 +29,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class MainRepository @Inject constructor(
-  val geocodingClient: GeocodingClient
+  val geocodingClient: GeocodingClient,
+  val keyDatabase: KeyDatabase
 ) {
     suspend fun reverseGeocoding(lat: Double, lon: Double, error: (String) -> Unit) =
         withContext(Dispatchers.IO) {
@@ -47,4 +49,8 @@ class MainRepository @Inject constructor(
             }
             liveData
         }
+
+    fun readAllKey() = keyDatabase.readAllKey()
+
+    suspend fun deleteKey(id: String) = keyDatabase.deleteKey(id)
 }

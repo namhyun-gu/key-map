@@ -13,18 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package dev.namhyun.geokey.repository
+package dev.namhyun.geokey.data
 
-import dev.namhyun.geokey.data.KeyDatabase
+import androidx.lifecycle.LiveData
+import dev.namhyun.geokey.model.Document
 import dev.namhyun.geokey.model.Key
-import javax.inject.Inject
+import dev.namhyun.geokey.model.Resource
 
-class AddDataRepository @Inject constructor(
-  val keyDatabase: KeyDatabase
-) {
-    suspend fun readKey(id: String) = keyDatabase.readKey(id)
+interface KeyDatabase {
 
-    suspend fun updateKey(id: String, key: Key) = keyDatabase.updateKey(id, key)
+    suspend fun createKey(key: Key): String
 
-    suspend fun createKey(key: Key) = keyDatabase.createKey(key)
+    suspend fun readKey(id: String): Resource<Document<Key>>
+
+    fun readAllKey(): LiveData<Resource<List<Document<Key>>>>
+
+    suspend fun updateKey(id: String, key: Key): String
+
+    suspend fun deleteKey(id: String): Boolean
 }
