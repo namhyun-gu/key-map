@@ -184,7 +184,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
             val marker = Marker().apply {
                 position = latLng
                 map = naverMap
-                icon = OverlayImage.fromResource(R.drawable.ic_place)
+                icon = OverlayImage.fromResource(R.drawable.ic_filled_key)
             }
             marker.setOnClickListener {
                 true
