@@ -180,17 +180,22 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
             mapMarkers.clear()
         }
 
-        keys.forEach { (latLng, _) ->
+        keys.forEach { (latLng, keys) ->
             val marker = Marker().apply {
                 position = latLng
                 map = naverMap
                 icon = OverlayImage.fromResource(R.drawable.ic_filled_key)
             }
             marker.setOnClickListener {
+                showMarkerSheet(keys)
                 true
             }
             mapMarkers.add(marker)
         }
+    }
+
+    private fun showMarkerSheet(keys: List<Key>) {
+        MarkerSheetDialogFragment(keys).show(supportFragmentManager, "sheet")
     }
 
     override fun onMapReady(map: NaverMap) {
