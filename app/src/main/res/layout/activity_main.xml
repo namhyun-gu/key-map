@@ -1,122 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/layout_root"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     tools:context=".ui.main.MainActivity">
 
-<!--    <com.google.android.material.appbar.AppBarLayout-->
-<!--        style="@style/Widget.MaterialComponents.AppBarLayout.Surface"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:elevation="@dimen/keyline_2">-->
-
-<!--        <LinearLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="42dp"-->
-<!--            android:layout_marginBottom="@dimen/keyline_4">-->
-
-<!--            <TextView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginStart="@dimen/keyline_4"-->
-<!--                android:layout_marginEnd="@dimen/keyline_4"-->
-<!--                android:text="@string/app_name"-->
-<!--                android:textAppearance="?textAppearanceHeadline4"-->
-<!--                android:textColor="@color/material_on_surface_emphasis_high_type"-->
-<!--                android:textStyle="bold" />-->
-
-<!--        </LinearLayout>-->
-
-<!--        &lt;!&ndash;        <androidx.appcompat.widget.Toolbar&ndash;&gt;-->
-<!--        &lt;!&ndash;            android:id="@+id/toolbar"&ndash;&gt;-->
-<!--        &lt;!&ndash;            android:layout_width="match_parent"&ndash;&gt;-->
-<!--        &lt;!&ndash;            android:layout_height="?attr/actionBarSize" />&ndash;&gt;-->
-
-<!--    </com.google.android.material.appbar.AppBarLayout>-->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/map_fragment"
+        android:name="com.naver.maps.map.MapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/layout_location"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
+        android:id="@+id/layout_location"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+        android:layout_height="56dp"
+        android:background="?attr/colorPrimary"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/list_keys"
+        app:layout_constraintTop_toBottomOf="@id/map_fragment">
 
-        <LinearLayout
-            android:id="@+id/layout_not_connected"
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/keyline_4"
+            android:src="@drawable/ic_location"
+            app:tint="?attr/colorOnPrimary" />
+
+        <TextView
+            android:id="@+id/tv_current_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorError"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="@dimen/keyline_4"
-            android:visibility="gone"
-            tools:visibility="visible">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_network_off"
-                android:tint="@android:color/white" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/keyline_4"
-                android:text="@string/msg_not_connected"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                android:textColor="?attr/colorOnError" />
-
-        </LinearLayout>
-
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/map_fragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:name="com.naver.maps.map.MapFragment" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/list_keys"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/colorSurface"
-            android:elevation="8dp"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:src="@drawable/ic_location" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:orientation="vertical"
-                android:padding="4dp">
-
-                <TextView
-                    android:id="@+id/tv_current_location"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="80dp"
-                    android:text="None"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
-
-            </LinearLayout>
-
-        </LinearLayout>
+            android:layout_marginStart="@dimen/keyline_4"
+            android:layout_marginEnd="@dimen/keyline_4"
+            android:text="None"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            android:textColor="?attr/colorOnPrimary" />
 
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_not_connected"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="?attr/colorError"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="@dimen/keyline_4"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/layout_location"
+        app:layout_constraintTop_toTopOf="@id/layout_location"
+        tools:visibility="visible">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_network_off"
+            app:tint="@android:color/white" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/keyline_4"
+            android:text="@string/msg_not_connected"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            android:textColor="?attr/colorOnError" />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list_keys"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_location" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
@@ -124,6 +91,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:srcCompat="@drawable/ic_add" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
