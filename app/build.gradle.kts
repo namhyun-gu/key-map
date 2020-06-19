@@ -98,6 +98,7 @@ dependencies {
 
     // Google Services
     implementation("com.google.android.gms:play-services-location:17.0.0")
+    implementation("com.google.android.gms:play-services-auth:18.0.0")
 
     // Firebase
     implementation("com.google.firebase:firebase-common-ktx:19.3.0")
@@ -105,6 +106,7 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore-ktx:21.4.3")
     implementation("com.google.firebase:firebase-config-ktx:19.1.4")
     implementation("com.google.firebase:firebase-crashlytics:17.0.1")
+    implementation("com.google.firebase:firebase-auth-ktx:19.3.1")
 
     // Naver Map
     implementation("com.naver.maps:map-sdk:3.8.0")
