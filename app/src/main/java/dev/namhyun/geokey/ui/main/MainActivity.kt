@@ -23,6 +23,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.launch
 import androidx.activity.result.registerForActivityResult
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
@@ -104,7 +105,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
 
     override fun onStart() {
         super.onStart()
-        requestLocation()
+        requestLocation.launch()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
