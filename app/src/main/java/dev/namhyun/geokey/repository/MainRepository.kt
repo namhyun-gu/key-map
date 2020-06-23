@@ -21,6 +21,7 @@ import com.skydoves.sandwich.onError
 import com.skydoves.sandwich.onException
 import com.skydoves.sandwich.onSuccess
 import dev.namhyun.geokey.data.KeyDatabase
+import dev.namhyun.geokey.model.Key
 import dev.namhyun.geokey.model.LocationData
 import dev.namhyun.geokey.network.GeocodingClient
 import dev.namhyun.geokey.util.getAddress
@@ -51,6 +52,8 @@ class MainRepository @Inject constructor(
         }
 
     fun readAllKey() = keyDatabase.readAllKey()
+
+    suspend fun createKey(key: Key) = keyDatabase.createKey(key)
 
     suspend fun deleteKey(id: String) = keyDatabase.deleteKey(id)
 }

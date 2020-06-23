@@ -22,7 +22,7 @@ import dagger.hilt.android.components.ActivityRetainedComponent
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import dev.namhyun.geokey.data.KeyDatabase
 import dev.namhyun.geokey.network.GeocodingClient
-import dev.namhyun.geokey.repository.AddDataRepository
+import dev.namhyun.geokey.repository.DetailRepository
 import dev.namhyun.geokey.repository.MainRepository
 
 @Module
@@ -40,9 +40,9 @@ object RepositoryModule {
 
     @Provides
     @ActivityRetainedScoped
-    fun provideAddDataRepository(
+    fun provideDetailRepository(
       keyDatabase: KeyDatabase
-    ): AddDataRepository {
-        return AddDataRepository(keyDatabase)
+    ): DetailRepository {
+        return DetailRepository(keyDatabase)
     }
 }

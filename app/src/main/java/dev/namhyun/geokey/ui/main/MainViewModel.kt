@@ -23,7 +23,9 @@ import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.geometry.LatLngBounds
+import dev.namhyun.geokey.model.Document
 import dev.namhyun.geokey.model.Key
+import dev.namhyun.geokey.model.LocationData
 import dev.namhyun.geokey.model.LocationLiveData
 import dev.namhyun.geokey.model.NetworkLiveData
 import dev.namhyun.geokey.model.Resource
@@ -49,7 +51,8 @@ class MainViewModel @ViewModelInject constructor(
 
     val networkData = NetworkLiveData(application)
     val keyData = mainRepository.readAllKey()
-    val markerData = MutableLiveData<Map<LatLng, List<Key>>>()
+    val markerData = MutableLiveData<Map<LatLng, List<Document<Key>>>>()
+    val addKeyFormData = MutableLiveData<AddKeyFormState>(EmptyData)
 
     fun updateMarker(region: Array<LatLng>) {
         val bounds = LatLngBounds.Builder().apply {
@@ -61,16 +64,32 @@ class MainViewModel @ViewModelInject constructor(
         val keys = keyData.value
         if (keys != null && keys is Resource.Success) {
             val keysInBounds = keys.data
-                .map { it.value }
-                .filter { bounds.contains(it.latLng) }
+                .filter { bounds.contains(it.value.latLng) }
             val nearKeys = KeyUtil.collectNearKeys(keysInBounds)
             markerData.value = nearKeys
         }
     }
 
-    fun deleteKey(id: String) {
-        viewModelScope.launch {
-            mainRepository.deleteKey(id)
+    fun createKey(name: String, key: String, location: LocationData) {
+        val invalidItems = mutableListOf<String>()
+        if (name.trim().isEmpty()) {
+            invalidItems.add("name")
         }
+        if (key.trim().isEmpty()) {
+            invalidItems.add("key")
+        }
+        if (invalidItems.isNotEmpty()) {
+            addKeyFormData.value = InvalidData(invalidItems)
+            return
+        }
+        val keyData = Key(name = name, key = key, locationData = location)
+        viewModelScope.launch {
+            mainRepository.createKey(keyData)
+            addKeyFormData.value = ValidData
+        }
+    }
+
+    fun resetForm() {
+        addKeyFormData.value = EmptyData
     }
 }

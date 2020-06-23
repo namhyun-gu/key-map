@@ -18,8 +18,6 @@ package dev.namhyun.geokey.ui.main
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -41,14 +39,13 @@ import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import dagger.hilt.android.AndroidEntryPoint
 import dev.namhyun.geokey.R
+import dev.namhyun.geokey.model.Document
 import dev.namhyun.geokey.model.Key
 import dev.namhyun.geokey.model.LocationData
 import dev.namhyun.geokey.model.Resource
-import dev.namhyun.geokey.ui.adapter.ItemEventListener
 import dev.namhyun.geokey.ui.adapter.KeyAdapter
-import dev.namhyun.geokey.ui.adddata.AddDataActivity
-import dev.namhyun.geokey.ui.adddata.AddDataActivity.Companion.EXTRA_KEY_ID
-import dev.namhyun.geokey.ui.adddata.AddDataActivity.Companion.EXTRA_LOCATION_DATA
+import dev.namhyun.geokey.ui.detail.DetailActivity
+import dev.namhyun.geokey.ui.detail.DetailActivity.Companion.EXTRA_KEY_ID
 import kotlinx.android.synthetic.main.activity_main.*
 
 @AndroidEntryPoint
@@ -59,6 +56,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
     private lateinit var keyAdapter: KeyAdapter
     private lateinit var naverMap: NaverMap
 
+    // TODO 권한을 처음 받을때 동작하지 결과를 가져오지 못함.
     val requestLocation = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
         ACCESS_FINE_LOCATION
@@ -108,36 +106,17 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
         requestLocation.launch()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
     private fun initViews() {
         fab.setOnClickListener {
             val location = viewModel.locationData.value
             if (location != null) {
-                openAddData(location)
+                showAddKeySheet(location)
             }
         }
-        keyAdapter = KeyAdapter(object : ItemEventListener {
-            override fun onItemSelected(id: String, key: Key) {
-                openEditData(id)
-            }
+        keyAdapter = KeyAdapter() {
+            openDetailKey(it.id)
+        }
 
-            override fun onItemDelete(id: String, key: Key) {
-                buildDeleteDialog(key.name) {
-                    viewModel.deleteKey(id)
-                }.show()
-            }
-        })
         list_keys.layoutManager = LinearLayoutManager(this)
         list_keys.adapter = keyAdapter
         list_keys.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
@@ -146,14 +125,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
         mapFragment.getMapAsync(this)
     }
 
-    private fun openAddData(location: LocationData) {
-        val intent = Intent(this, AddDataActivity::class.java)
-        intent.putExtra(EXTRA_LOCATION_DATA, location)
-        startActivity(intent)
-    }
-
-    private fun openEditData(keyId: String) {
-        val intent = Intent(this, AddDataActivity::class.java)
+    private fun openDetailKey(keyId: String) {
+        val intent = Intent(this, DetailActivity::class.java)
         intent.putExtra(EXTRA_KEY_ID, keyId)
         startActivity(intent)
     }
@@ -175,7 +148,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
         return builder.create()
     }
 
-    private fun updateMarker(keys: Map<LatLng, List<Key>>) {
+    // TODO 화면 회전 시 naverMap 객체가 초기화 되어 이용할 수 없음.
+    private fun updateMarker(keys: Map<LatLng, List<Document<Key>>>) {
         if (mapMarkers.isNotEmpty()) {
             mapMarkers.forEach { it.map = null }
             mapMarkers.clear()
@@ -195,8 +169,14 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
         }
     }
 
-    private fun showMarkerSheet(keys: List<Key>) {
-        MarkerSheetDialogFragment(keys).show(supportFragmentManager, "sheet")
+    private fun showMarkerSheet(keys: List<Document<Key>>) {
+        MarkerDialogFragment(keys) {
+            openDetailKey(it.id)
+        }.show(supportFragmentManager, "markerSheet")
+    }
+
+    private fun showAddKeySheet(location: LocationData) {
+        AddKeyDialogFragment(location).show(supportFragmentManager, "addKeySheet")
     }
 
     override fun onMapReady(map: NaverMap) {

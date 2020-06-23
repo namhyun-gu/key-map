@@ -19,12 +19,12 @@ import dev.namhyun.geokey.data.KeyDatabase
 import dev.namhyun.geokey.model.Key
 import javax.inject.Inject
 
-class AddDataRepository @Inject constructor(
+class DetailRepository @Inject constructor(
   val keyDatabase: KeyDatabase
 ) {
     suspend fun readKey(id: String) = keyDatabase.readKey(id)
 
     suspend fun updateKey(id: String, key: Key) = keyDatabase.updateKey(id, key)
 
-    suspend fun createKey(key: Key) = keyDatabase.createKey(key)
+    suspend fun deleteKey(id: String) = keyDatabase.deleteKey(id)
 }

@@ -13,6 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package dev.namhyun.geokey.model
+package dev.namhyun.geokey.ui.detail
 
-data class LocationData(val address: String, val lat: Double, val lon: Double)
+sealed class EditKeyFormState
+
+object EmptyData : EditKeyFormState()
+
+class InvalidData(val invalidItem: List<String>) : EditKeyFormState()
+
+object ValidData : EditKeyFormState()

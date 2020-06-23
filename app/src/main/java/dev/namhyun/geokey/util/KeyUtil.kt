@@ -17,6 +17,7 @@ package dev.namhyun.geokey.util
 
 import android.location.Location
 import com.naver.maps.geometry.LatLng
+import dev.namhyun.geokey.model.Document
 import dev.namhyun.geokey.model.Key
 import dev.namhyun.geokey.model.LocationData
 
@@ -40,17 +41,17 @@ val Key.locationData: LocationData
 
 object KeyUtil {
 
-    fun collectNearKeys(keys: List<Key>): Map<LatLng, List<Key>> {
-        val nearKeys: MutableMap<LatLng, MutableList<Key>> = mutableMapOf()
+    fun collectNearKeys(keys: List<Document<Key>>): Map<LatLng, List<Document<Key>>> {
+        val nearKeys: MutableMap<LatLng, MutableList<Document<Key>>> = mutableMapOf()
         for (key in keys.iterator()) {
             val latLngs = nearKeys.keys
             if (latLngs.isEmpty()) {
-                nearKeys[key.latLng] = mutableListOf(key)
+                nearKeys[key.value.latLng] = mutableListOf(key)
             } else {
                 var hasNearKey = false
                 var nearKey: LatLng? = null
                 for (latLng in latLngs.iterator()) {
-                    if (latLng.nearBounds(30.0).contains(key.latLng)) {
+                    if (latLng.nearBounds(30.0).contains(key.value.latLng)) {
                         hasNearKey = true
                         nearKey = latLng
                         break
@@ -59,7 +60,7 @@ object KeyUtil {
                 if (hasNearKey) {
                     nearKeys[nearKey!!]!!.add(key)
                 } else {
-                    nearKeys[key.latLng] = mutableListOf(key)
+                    nearKeys[key.value.latLng] = mutableListOf(key)
                 }
             }
         }
