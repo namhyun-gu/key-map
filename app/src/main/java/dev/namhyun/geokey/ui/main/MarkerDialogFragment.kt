@@ -16,18 +16,23 @@
 package dev.namhyun.geokey.ui.main
 
 import android.os.Bundle
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dev.namhyun.geokey.R
+import dev.namhyun.geokey.model.Document
 import dev.namhyun.geokey.model.Key
+import dev.namhyun.geokey.ui.adapter.KeyAdapter
 import kotlinx.android.synthetic.main.dialog_marker_sheet.view.*
-import kotlinx.android.synthetic.main.item_key_menu.view.*
 
-class MarkerSheetDialogFragment(private val keys: List<Key>) : BottomSheetDialogFragment() {
+class MarkerDialogFragment(
+  private val keys: List<Document<Key>>,
+  private val onItemSelected: (Document<Key>) -> Unit
+) : BottomSheetDialogFragment() {
 
     override fun onCreateView(
       inflater: LayoutInflater,
@@ -35,30 +40,19 @@ class MarkerSheetDialogFragment(private val keys: List<Key>) : BottomSheetDialog
       savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.dialog_marker_sheet, container, false)
+        val keyAdapter = KeyAdapter(onItemSelected)
+
+        keyAdapter.addKeys(keys)
         view.list_keys.apply {
-            adapter = KeyAdapter(keys)
+            adapter = keyAdapter
             layoutManager = LinearLayoutManager(context)
+            val dividerDecoration =
+                DividerItemDecoration(
+                    ContextThemeWrapper(context, R.style.Theme_MyApp),
+                    DividerItemDecoration.VERTICAL
+                )
+            addItemDecoration(dividerDecoration)
         }
         return view
     }
-
-    private class KeyAdapter(val keys: List<Key>) : RecyclerView.Adapter<KeyViewHolder>() {
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): KeyViewHolder {
-            return KeyViewHolder(
-                LayoutInflater.from(parent.context).inflate(R.layout.item_key_menu, parent, false)
-            )
-        }
-
-        override fun getItemCount(): Int = keys.size
-
-        override fun onBindViewHolder(holder: KeyViewHolder, position: Int) {
-            val item = keys[position]
-            holder.itemView.apply {
-                tv_name.text = item.name
-                tv_key.text = item.key
-            }
-        }
-    }
-
-    private class KeyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 }

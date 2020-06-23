@@ -27,17 +27,10 @@ import dev.namhyun.geokey.util.distanceTo
 import dev.namhyun.geokey.util.meter
 import kotlinx.android.synthetic.main.item_key.view.*
 
-interface ItemEventListener {
-
-    fun onItemSelected(id: String, key: Key)
-
-    fun onItemDelete(id: String, key: Key)
-}
-
 class KeyAdapter(
-  private val itemEventListener: ItemEventListener
-) :
-    RecyclerView.Adapter<KeyAdapter.KeyViewHolder>() {
+  private val onItemSelected: ((Document<Key>) -> Unit)? = null
+) : RecyclerView.Adapter<KeyAdapter.KeyViewHolder>() {
+
     private val items = mutableListOf<Document<Key>>()
     private var currentLocation: LocationData? = null
 
@@ -49,19 +42,19 @@ class KeyAdapter(
     override fun getItemCount(): Int = items.size
 
     override fun onBindViewHolder(holder: KeyViewHolder, position: Int) {
-        val (id, item) = items[position]
+        val item = items[position]
         holder.itemView.apply {
-            tv_name.text = item.name
-            tv_key.text = item.key
-            tv_location.text = item.address
+            val value = item.value
+            tv_name.text = value.name
+            tv_key.text = value.key
+            tv_location.text = value.address
             if (currentLocation != null) {
-                tv_near_by.text = item.distanceTo(currentLocation!!).meter()
-            }
-            btn_delete.setOnClickListener {
-                itemEventListener.onItemDelete(id, item)
+                tv_near_by.text = value.distanceTo(currentLocation!!).meter()
+            } else {
+                tv_near_by.visibility = View.GONE
             }
             setOnClickListener {
-                itemEventListener.onItemSelected(id, item)
+                onItemSelected?.invoke(item)
             }
         }
     }
