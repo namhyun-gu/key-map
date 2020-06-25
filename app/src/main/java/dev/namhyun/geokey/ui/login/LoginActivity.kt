@@ -153,7 +153,6 @@ class LoginActivity : AppCompatActivity(R.layout.activity_login) {
     private fun updateUi(currentUser: FirebaseUser?) {
         if (currentUser != null) {
             startActivity(Intent(this, MainActivity::class.java))
-            finish()
         } else {
             if (showOneTap) {
                 setLoadingProgress(true)
