@@ -15,16 +15,11 @@
  */
 package dev.namhyun.geokey.ui.main
 
-import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.launch
-import androidx.activity.result.registerForActivityResult
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -42,6 +37,7 @@ import dev.namhyun.geokey.R
 import dev.namhyun.geokey.model.Document
 import dev.namhyun.geokey.model.Key
 import dev.namhyun.geokey.model.LocationData
+import dev.namhyun.geokey.model.NetworkState
 import dev.namhyun.geokey.model.Resource
 import dev.namhyun.geokey.ui.adapter.KeyAdapter
 import dev.namhyun.geokey.ui.detail.DetailActivity
@@ -56,31 +52,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
     private lateinit var keyAdapter: KeyAdapter
     private lateinit var naverMap: NaverMap
 
-    // TODO 권한을 처음 받을때 동작하지 결과를 가져오지 못함.
-    val requestLocation = registerForActivityResult(
-        ActivityResultContracts.RequestPermission(),
-        ACCESS_FINE_LOCATION
-    ) { isGranted ->
-        if (isGranted) {
-            viewModel.locationData.observe(this, Observer {
-                tv_current_location.text = it.address
-                keyAdapter.setLocation(it)
-                naverMap.locationOverlay.position = LatLng(it.lat, it.lon)
-                naverMap.moveCamera(
-                    CameraUpdate.toCameraPosition(
-                        CameraPosition(
-                            LatLng(it.lat, it.lon),
-                            17.0
-                        )
-                    )
-                )
-            })
-        } else {
-            Toast.makeText(this, "Required location permission", Toast.LENGTH_SHORT).show()
-            onBackPressed()
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initViews()
@@ -92,18 +63,31 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
             }
         })
 
-        viewModel.networkData.observe(this, Observer {
-            layout_not_connected.visibility = if (it) View.GONE else View.VISIBLE
+        viewModel.networkStateData.observe(this, Observer {
+            layout_not_connected.visibility =
+                if (it is NetworkState.Available) View.GONE else View.VISIBLE
         })
 
         viewModel.markerData.observe(this, Observer {
             updateMarker(it)
         })
+
+        viewModel.locationData.observe(this, Observer {
+            updateAddress(it.address)
+            updateAdapter(it)
+            updateMapCamera(it)
+        })
     }
 
-    override fun onStart() {
-        super.onStart()
-        requestLocation.launch()
+    override fun onMapReady(map: NaverMap) {
+        naverMap = map
+        map.apply {
+            setLayerGroupEnabled(NaverMap.LAYER_GROUP_BUILDING, true)
+            locationOverlay.isVisible = true
+            addOnCameraIdleListener {
+                viewModel.updateMarker(naverMap.contentRegion)
+            }
+        }
     }
 
     private fun initViews() {
@@ -125,27 +109,22 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
         mapFragment.getMapAsync(this)
     }
 
-    private fun openDetailKey(keyId: String) {
-        val intent = Intent(this, DetailActivity::class.java)
-        intent.putExtra(EXTRA_KEY_ID, keyId)
-        startActivity(intent)
+    private fun updateAddress(address: String) {
+        tv_current_location.text = address
     }
 
-    private fun buildDeleteDialog(name: String, onDelete: () -> Unit): AlertDialog {
-        val builder = AlertDialog.Builder(this)
-        builder.apply {
-            setMessage(getString(R.string.dialog_delete_title, name))
-            setPositiveButton(
-                android.R.string.ok
-            ) { dialog, _ ->
-                dialog.dismiss()
-                onDelete()
-            }
-            setNegativeButton(android.R.string.cancel) { dialog, _ ->
-                dialog.dismiss()
-            }
-        }
-        return builder.create()
+    private fun updateAdapter(location: LocationData) {
+        keyAdapter.setLocation(location)
+    }
+
+    private fun updateMapCamera(location: LocationData) {
+        val latLng = LatLng(location.lat, location.lon)
+        naverMap.locationOverlay.position = latLng
+        naverMap.moveCamera(
+            CameraUpdate.toCameraPosition(
+                CameraPosition(latLng, 17.0)
+            )
+        )
     }
 
     // TODO 화면 회전 시 naverMap 객체가 초기화 되어 이용할 수 없음.
@@ -169,6 +148,24 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
         }
     }
 
+    private fun createMarker(latLng: LatLng, keys: List<Document<Key>>): Marker {
+        return Marker().apply {
+            position = latLng
+            map = naverMap
+            icon = OverlayImage.fromResource(R.drawable.ic_filled_key)
+            setOnClickListener {
+                showMarkerSheet(keys)
+                true
+            }
+        }
+    }
+
+    private fun openDetailKey(keyId: String) {
+        val intent = Intent(this, DetailActivity::class.java)
+        intent.putExtra(EXTRA_KEY_ID, keyId)
+        startActivity(intent)
+    }
+
     private fun showMarkerSheet(keys: List<Document<Key>>) {
         MarkerDialogFragment(keys) {
             openDetailKey(it.id)
@@ -177,14 +174,5 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
 
     private fun showAddKeySheet(location: LocationData) {
         AddKeyDialogFragment(location).show(supportFragmentManager, "addKeySheet")
-    }
-
-    override fun onMapReady(map: NaverMap) {
-        naverMap = map
-        map.setLayerGroupEnabled(NaverMap.LAYER_GROUP_BUILDING, true)
-        map.locationOverlay.isVisible = true
-        map.addOnCameraIdleListener {
-            viewModel.updateMarker(naverMap.contentRegion)
-        }
     }
 }

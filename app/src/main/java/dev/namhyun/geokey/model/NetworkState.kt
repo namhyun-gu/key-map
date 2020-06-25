@@ -15,6 +15,9 @@
  */
 package dev.namhyun.geokey.model
 
-data class Location(val lat: Double, val lon: Double)
+sealed class NetworkState {
 
-data class LocationData(val address: String, val lat: Double, val lon: Double)
+    object Available : NetworkState()
+
+    object Unavailable : NetworkState()
+}

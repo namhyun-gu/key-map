@@ -15,24 +15,51 @@
  */
 package dev.namhyun.geokey.repository
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.liveData
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.onError
 import com.skydoves.sandwich.onException
 import com.skydoves.sandwich.onSuccess
 import dev.namhyun.geokey.data.KeyDatabase
+import dev.namhyun.geokey.data.LocationDataSource
+import dev.namhyun.geokey.data.NetworkStateDataSource
 import dev.namhyun.geokey.model.Key
+import dev.namhyun.geokey.model.Location
 import dev.namhyun.geokey.model.LocationData
+import dev.namhyun.geokey.model.NetworkState
 import dev.namhyun.geokey.network.GeocodingClient
 import dev.namhyun.geokey.util.getAddress
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
 
 class MainRepository @Inject constructor(
+  val locationDataSource: LocationDataSource,
+  val networkStateDataSource: NetworkStateDataSource,
   val geocodingClient: GeocodingClient,
   val keyDatabase: KeyDatabase
 ) {
+    fun getLastLocation(): LiveData<Location> {
+        return liveData {
+            emit(locationDataSource.getLastLocation())
+            locationDataSource.getLocationUpdates().collect {
+                emit(it)
+            }
+        }
+    }
+
+    fun getNetworkState(): LiveData<NetworkState> {
+        return liveData {
+            emit(networkStateDataSource.getState())
+            networkStateDataSource.getStateUpdates().collect {
+                emit(it)
+            }
+        }
+    }
+
     suspend fun reverseGeocoding(lat: Double, lon: Double, error: (String) -> Unit) =
         withContext(Dispatchers.IO) {
             val liveData = MutableLiveData<LocationData>()

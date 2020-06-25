@@ -13,8 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package dev.namhyun.geokey.model
+package dev.namhyun.geokey.data
 
-data class Location(val lat: Double, val lon: Double)
+import dev.namhyun.geokey.model.NetworkState
+import kotlinx.coroutines.flow.Flow
 
-data class LocationData(val address: String, val lat: Double, val lon: Double)
+interface NetworkStateDataSource {
+
+    fun getState(): NetworkState
+
+    fun getStateUpdates(): Flow<NetworkState>
+}

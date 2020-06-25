@@ -28,7 +28,7 @@ import dev.namhyun.geokey.util.meter
 import kotlinx.android.synthetic.main.item_key.view.*
 
 class KeyAdapter(
-    private val onItemSelected: ((Document<Key>) -> Unit)? = null
+  private val onItemSelected: ((Document<Key>) -> Unit)? = null
 ) : RecyclerView.Adapter<KeyAdapter.KeyViewHolder>() {
 
     private val items = mutableListOf<Document<Key>>()

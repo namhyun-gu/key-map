@@ -15,10 +15,9 @@
  */
 package dev.namhyun.geokey.ui.main
 
-import android.app.Application
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
@@ -26,8 +25,6 @@ import com.naver.maps.geometry.LatLngBounds
 import dev.namhyun.geokey.model.Document
 import dev.namhyun.geokey.model.Key
 import dev.namhyun.geokey.model.LocationData
-import dev.namhyun.geokey.model.LocationLiveData
-import dev.namhyun.geokey.model.NetworkLiveData
 import dev.namhyun.geokey.model.Resource
 import dev.namhyun.geokey.repository.MainRepository
 import dev.namhyun.geokey.util.KeyUtil
@@ -37,19 +34,17 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class MainViewModel @ViewModelInject constructor(
-  application: Application,
   private val mainRepository: MainRepository
-) : AndroidViewModel(application) {
-    private val _locationData = LocationLiveData(application)
-    val locationData = _locationData.switchMap {
+) : ViewModel() {
+    val locationData = mainRepository.getLastLocation().switchMap {
         launchOnViewModelScope {
-            mainRepository.reverseGeocoding(it.latitude, it.longitude) {
+            mainRepository.reverseGeocoding(it.lat, it.lon) {
                 Timber.e(it)
             }
         }
     }
 
-    val networkData = NetworkLiveData(application)
+    val networkStateData = mainRepository.getNetworkState()
     val keyData = mainRepository.readAllKey()
     val markerData = MutableLiveData<Map<LatLng, List<Document<Key>>>>()
     val addKeyFormData = MutableLiveData<AddKeyFormState>(EmptyData)
