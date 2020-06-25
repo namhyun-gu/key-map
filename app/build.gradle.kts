@@ -68,7 +68,7 @@ dependencies {
     implementation(Deps.Android.core)
     implementation(Deps.Android.appcompat)
     implementation("androidx.activity:activity-ktx:1.2.0-alpha06")
-    implementation("androidx.fragment:fragment-ktx:1.2.5")
+    implementation("androidx.fragment:fragment-ktx:1.3.0-alpha06")
     implementation("com.google.android.material:material:1.1.0")
     implementation("androidx.constraintlayout:constraintlayout:1.1.3")
     implementation("androidx.lifecycle:lifecycle-extensions:${Versions.lifecycleVersion}")

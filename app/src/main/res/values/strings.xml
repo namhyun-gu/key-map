@@ -12,6 +12,7 @@
     <string name="msg_key_not_saved">Key not saved</string>
     <string name="dialog_delete_title">Delete key \'%1$s\'</string>
     <string name="msg_not_connected">Not connected internet</string>
+    <string name="msg_login_failed">Failed to login</string>
     <string name="action_add">Add</string>
     <string name="action_cancel">Cancel</string>
     <string name="hint_location">Location</string>
