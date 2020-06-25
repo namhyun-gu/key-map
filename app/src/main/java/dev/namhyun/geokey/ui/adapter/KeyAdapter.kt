@@ -28,7 +28,7 @@ import dev.namhyun.geokey.util.meter
 import kotlinx.android.synthetic.main.item_key.view.*
 
 class KeyAdapter(
-  private val onItemSelected: ((Document<Key>) -> Unit)? = null
+    private val onItemSelected: ((Document<Key>) -> Unit)? = null
 ) : RecyclerView.Adapter<KeyAdapter.KeyViewHolder>() {
 
     private val items = mutableListOf<Document<Key>>()
@@ -50,8 +50,6 @@ class KeyAdapter(
             tv_location.text = value.address
             if (currentLocation != null) {
                 tv_near_by.text = value.distanceTo(currentLocation!!).meter()
-            } else {
-                tv_near_by.visibility = View.GONE
             }
             setOnClickListener {
                 onItemSelected?.invoke(item)
