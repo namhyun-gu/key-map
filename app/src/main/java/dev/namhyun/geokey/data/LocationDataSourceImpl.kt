@@ -22,13 +22,14 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import dev.namhyun.geokey.model.Location
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
+import dev.namhyun.geokey.util.safeOffer
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 class LocationDataSourceImpl(context: Context) : LocationDataSource {
     private val locationClient = LocationServices.getFusedLocationProviderClient(context)
@@ -54,7 +55,7 @@ class LocationDataSourceImpl(context: Context) : LocationDataSource {
                         super.onLocationResult(result)
                         result ?: return
                         val lastLocation = result.lastLocation
-                        channel.offer(Location(lastLocation.latitude, lastLocation.longitude))
+                        channel.safeOffer(Location(lastLocation.latitude, lastLocation.longitude))
                     }
                 }
             }
