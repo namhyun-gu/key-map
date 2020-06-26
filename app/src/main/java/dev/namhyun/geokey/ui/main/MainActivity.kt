@@ -17,7 +17,6 @@ package dev.namhyun.geokey.ui.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -37,7 +36,6 @@ import dev.namhyun.geokey.R
 import dev.namhyun.geokey.model.Document
 import dev.namhyun.geokey.model.Key
 import dev.namhyun.geokey.model.LocationData
-import dev.namhyun.geokey.model.NetworkState
 import dev.namhyun.geokey.model.Resource
 import dev.namhyun.geokey.ui.adapter.KeyAdapter
 import dev.namhyun.geokey.ui.detail.DetailActivity
@@ -63,10 +61,10 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
             }
         })
 
-        viewModel.networkStateData.observe(this, Observer {
-            layout_not_connected.visibility =
-                if (it is NetworkState.Available) View.GONE else View.VISIBLE
-        })
+//        viewModel.networkStateData.observe(this, Observer {
+//            layout_not_connected.visibility =
+//                if (it is NetworkState.Available) View.GONE else View.VISIBLE
+//        })
 
         viewModel.markerData.observe(this, Observer {
             updateMarker(it)
