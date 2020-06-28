@@ -27,9 +27,27 @@ jobs:
           java-version: 1.8
       - name: Check Spotless
         run: ./gradlew spotlessCheck
+        env:
+          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          NCP_CLIENT_ID: ${{ secrets.NCP_CLIENT_ID }}
+          NCP_CLIENT_SECRET: ${{ secrets.NCP_CLIENT_SECRET }}
       - name: Run lint
         run: ./gradlew lint
+        env:
+          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          NCP_CLIENT_ID: ${{ secrets.NCP_CLIENT_ID }}
+          NCP_CLIENT_SECRET: ${{ secrets.NCP_CLIENT_SECRET }}
       - uses: actions/upload-artifact@v2
         with:
           name: lint-results
           path: app/build/reports/
+      - uses: homoluctus/slatify@master
+        if: always()
+        with:
+          type: ${{ job.status }}
+          job_name: 'Check lint'
+          url: ${{ secrets.SLACK_WEBHOOK }}
