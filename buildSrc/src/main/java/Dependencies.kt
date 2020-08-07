@@ -22,7 +22,7 @@ object Versions {
     // Plugins
     const val kotlin = "1.3.72"
     const val spotless = "4.0.1"
-    const val gradleBuildTool = "4.0.0"
+    const val gradleBuildTool = "4.0.1"
     const val googleServices = "4.3.3"
     const val crashlytics = "2.1.1"
 
