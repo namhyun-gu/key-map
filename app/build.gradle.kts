@@ -67,9 +67,9 @@ dependencies {
     // Android
     implementation(Deps.Android.core)
     implementation(Deps.Android.appcompat)
-    implementation("androidx.activity:activity-ktx:1.2.0-alpha06")
-    implementation("androidx.fragment:fragment-ktx:1.3.0-alpha06")
-    implementation("com.google.android.material:material:1.1.0")
+    implementation("androidx.activity:activity-ktx:1.2.0-alpha07")
+    implementation("androidx.fragment:fragment-ktx:1.3.0-alpha07")
+    implementation("com.google.android.material:material:1.2.0")
     implementation("androidx.constraintlayout:constraintlayout:1.1.3")
     implementation("androidx.lifecycle:lifecycle-extensions:${Versions.lifecycleVersion}")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:${Versions.lifecycleVersion}")
@@ -99,15 +99,15 @@ dependencies {
 
     // Google Services
     implementation("com.google.android.gms:play-services-location:17.0.0")
-    implementation("com.google.android.gms:play-services-auth:18.0.0")
+    implementation("com.google.android.gms:play-services-auth:18.1.0")
 
     // Firebase
     implementation("com.google.firebase:firebase-common-ktx:19.3.0")
-    implementation("com.google.firebase:firebase-analytics-ktx:17.4.3")
-    implementation("com.google.firebase:firebase-firestore-ktx:21.4.3")
-    implementation("com.google.firebase:firebase-config-ktx:19.1.4")
-    implementation("com.google.firebase:firebase-crashlytics:17.0.1")
-    implementation("com.google.firebase:firebase-auth-ktx:19.3.1")
+    implementation("com.google.firebase:firebase-analytics-ktx:17.4.4")
+    implementation("com.google.firebase:firebase-firestore-ktx:21.5.0")
+    implementation("com.google.firebase:firebase-config-ktx:19.2.0")
+    implementation("com.google.firebase:firebase-crashlytics:17.1.1")
+    implementation("com.google.firebase:firebase-auth-ktx:19.3.2")
 
     // Naver Map
     implementation("com.naver.maps:map-sdk:3.8.0")
