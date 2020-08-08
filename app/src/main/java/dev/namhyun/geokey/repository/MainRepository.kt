@@ -25,22 +25,21 @@ import com.skydoves.sandwich.onSuccess
 import dev.namhyun.geokey.data.KeyDatabase
 import dev.namhyun.geokey.data.LocationDataSource
 import dev.namhyun.geokey.data.NetworkStateDataSource
-import dev.namhyun.geokey.model.Key
 import dev.namhyun.geokey.model.Location
 import dev.namhyun.geokey.model.LocationData
 import dev.namhyun.geokey.model.NetworkState
 import dev.namhyun.geokey.network.GeocodingClient
 import dev.namhyun.geokey.util.getAddress
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 class MainRepository @Inject constructor(
-  val locationDataSource: LocationDataSource,
-  val networkStateDataSource: NetworkStateDataSource,
-  val geocodingClient: GeocodingClient,
-  val keyDatabase: KeyDatabase
+    val locationDataSource: LocationDataSource,
+    val networkStateDataSource: NetworkStateDataSource,
+    val geocodingClient: GeocodingClient,
+    val keyDatabase: KeyDatabase
 ) {
     fun getLastLocation(): LiveData<Location> {
         return liveData {
@@ -79,8 +78,4 @@ class MainRepository @Inject constructor(
         }
 
     fun readAllKey() = keyDatabase.readAllKey()
-
-    suspend fun createKey(key: Key) = keyDatabase.createKey(key)
-
-    suspend fun deleteKey(id: String) = keyDatabase.deleteKey(id)
 }

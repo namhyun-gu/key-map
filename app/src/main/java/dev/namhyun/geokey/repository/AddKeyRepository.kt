@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package dev.namhyun.geokey.ui.main
+package dev.namhyun.geokey.repository
 
-sealed class AddKeyFormState
+import dev.namhyun.geokey.data.KeyDatabase
+import dev.namhyun.geokey.model.Key
+import javax.inject.Inject
 
-object EmptyData : AddKeyFormState()
-
-class InvalidData(val invalidItem: List<String>) : AddKeyFormState()
-
-object ValidData : AddKeyFormState()
+class AddKeyRepository @Inject constructor(
+    val keyDatabase: KeyDatabase
+) {
+    suspend fun createKey(key: Key) = keyDatabase.createKey(key)
+}

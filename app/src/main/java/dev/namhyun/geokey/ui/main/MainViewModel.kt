@@ -19,22 +19,19 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
-import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.geometry.LatLngBounds
 import dev.namhyun.geokey.model.Document
 import dev.namhyun.geokey.model.Key
-import dev.namhyun.geokey.model.LocationData
 import dev.namhyun.geokey.model.Resource
 import dev.namhyun.geokey.repository.MainRepository
 import dev.namhyun.geokey.util.KeyUtil
 import dev.namhyun.geokey.util.latLng
 import dev.namhyun.geokey.util.launchOnViewModelScope
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class MainViewModel @ViewModelInject constructor(
-  private val mainRepository: MainRepository
+    private val mainRepository: MainRepository
 ) : ViewModel() {
     val locationData = mainRepository.getLastLocation().switchMap {
         launchOnViewModelScope {
@@ -47,7 +44,6 @@ class MainViewModel @ViewModelInject constructor(
     val networkStateData = mainRepository.getNetworkState()
     val keyData = mainRepository.readAllKey()
     val markerData = MutableLiveData<Map<LatLng, List<Document<Key>>>>()
-    val addKeyFormData = MutableLiveData<AddKeyFormState>(EmptyData)
 
     fun updateMarker(region: Array<LatLng>) {
         val bounds = LatLngBounds.Builder().apply {
@@ -63,28 +59,5 @@ class MainViewModel @ViewModelInject constructor(
             val nearKeys = KeyUtil.collectNearKeys(keysInBounds)
             markerData.value = nearKeys
         }
-    }
-
-    fun createKey(name: String, key: String, location: LocationData) {
-        val invalidItems = mutableListOf<String>()
-        if (name.trim().isEmpty()) {
-            invalidItems.add("name")
-        }
-        if (key.trim().isEmpty()) {
-            invalidItems.add("key")
-        }
-        if (invalidItems.isNotEmpty()) {
-            addKeyFormData.value = InvalidData(invalidItems)
-            return
-        }
-        val keyData = Key(name = name, key = key, locationData = location)
-        viewModelScope.launch {
-            mainRepository.createKey(keyData)
-            addKeyFormData.value = ValidData
-        }
-    }
-
-    fun resetForm() {
-        addKeyFormData.value = EmptyData
     }
 }

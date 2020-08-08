@@ -24,7 +24,9 @@ import dev.namhyun.geokey.data.KeyDatabase
 import dev.namhyun.geokey.data.LocationDataSource
 import dev.namhyun.geokey.data.NetworkStateDataSource
 import dev.namhyun.geokey.network.GeocodingClient
+import dev.namhyun.geokey.repository.AddKeyRepository
 import dev.namhyun.geokey.repository.DetailRepository
+import dev.namhyun.geokey.repository.EditLocationRepository
 import dev.namhyun.geokey.repository.MainRepository
 
 @Module
@@ -34,10 +36,10 @@ object RepositoryModule {
     @Provides
     @ActivityRetainedScoped
     fun provideMainRepository(
-      locationDataSource: LocationDataSource,
-      networkStateDataSource: NetworkStateDataSource,
-      geocodingClient: GeocodingClient,
-      keyDatabase: KeyDatabase
+        locationDataSource: LocationDataSource,
+        networkStateDataSource: NetworkStateDataSource,
+        geocodingClient: GeocodingClient,
+        keyDatabase: KeyDatabase
     ): MainRepository {
         return MainRepository(
             locationDataSource,
@@ -50,8 +52,24 @@ object RepositoryModule {
     @Provides
     @ActivityRetainedScoped
     fun provideDetailRepository(
-      keyDatabase: KeyDatabase
+        keyDatabase: KeyDatabase
     ): DetailRepository {
         return DetailRepository(keyDatabase)
+    }
+
+    @Provides
+    @ActivityRetainedScoped
+    fun provideAddKeyRepository(
+        keyDatabase: KeyDatabase
+    ): AddKeyRepository {
+        return AddKeyRepository(keyDatabase)
+    }
+
+    @Provides
+    @ActivityRetainedScoped
+    fun provideEditLocationRepository(
+        geocodingClient: GeocodingClient
+    ): EditLocationRepository {
+        return EditLocationRepository(geocodingClient)
     }
 }

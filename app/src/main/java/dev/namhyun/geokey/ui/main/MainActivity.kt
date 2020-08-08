@@ -24,11 +24,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.naver.maps.geometry.LatLng
-import com.naver.maps.map.CameraPosition
-import com.naver.maps.map.CameraUpdate
-import com.naver.maps.map.MapFragment
-import com.naver.maps.map.NaverMap
-import com.naver.maps.map.OnMapReadyCallback
+import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,6 +34,7 @@ import dev.namhyun.geokey.model.Key
 import dev.namhyun.geokey.model.LocationData
 import dev.namhyun.geokey.model.Resource
 import dev.namhyun.geokey.ui.adapter.KeyAdapter
+import dev.namhyun.geokey.ui.addkey.AddKeyActivity
 import dev.namhyun.geokey.ui.detail.DetailActivity
 import dev.namhyun.geokey.ui.detail.DetailActivity.Companion.EXTRA_KEY_ID
 import kotlinx.android.synthetic.main.activity_main.*
@@ -92,7 +89,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
         fab.setOnClickListener {
             val location = viewModel.locationData.value
             if (location != null) {
-                showAddKeySheet(location)
+                AddKeyActivity.openActivity(this, location)
             }
         }
         keyAdapter = KeyAdapter() {
@@ -133,15 +130,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
         }
 
         keys.forEach { (latLng, keys) ->
-            val marker = Marker().apply {
-                position = latLng
-                map = naverMap
-                icon = OverlayImage.fromResource(R.drawable.ic_filled_key)
-            }
-            marker.setOnClickListener {
-                showMarkerSheet(keys)
-                true
-            }
+            val marker = createMarker(latLng, keys)
             mapMarkers.add(marker)
         }
     }
@@ -168,9 +157,5 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
         MarkerDialogFragment(keys) {
             openDetailKey(it.id)
         }.show(supportFragmentManager, "markerSheet")
-    }
-
-    private fun showAddKeySheet(location: LocationData) {
-        AddKeyDialogFragment(location).show(supportFragmentManager, "addKeySheet")
     }
 }

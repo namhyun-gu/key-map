@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name" translatable="false">GeoKey</string>
     <string name="action_settings" translatable="false">Settings</string>
-    <string name="title_add_data">Add Data</string>
-    <string name="title_edit_data">Edit Data</string>
+    <string name="title_add_key">Add Key</string>
+    <string name="title_edit_key">Edit Key</string>
+    <string name="title_edit_location">Edit Location</string>
     <string name="hint_name">Name</string>
     <string name="hint_key">Key</string>
     <string name="msg_fetch_keys_error">Can\'t fetch keys</string>
@@ -18,4 +19,5 @@
     <string name="hint_location">Location</string>
     <string name="action_edit">Edit</string>
     <string name="action_delete">Delete</string>
+    <string name="action_done">Done</string>
 </resources>

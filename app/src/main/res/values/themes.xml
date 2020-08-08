@@ -17,6 +17,11 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!--Top level DayNight theme to be used in AndroidManifest.xml-->
     <style name="Theme.MyApp" parent="Base.Theme.MyApp" />
+
+    <style name="Theme.MyApp.PrimaryActionBar" parent="Base.Theme.MyApp">
+        <item name="android:statusBarColor" tools:ignore="NewApi">?colorPrimaryDark</item>
+        <item name="android:windowLightStatusBar" tools:ignore="NewApi">false</item>
+    </style>
     <!--Splash-->
     <style name="Theme.MyApp.Splash" parent="Base.Theme.MyApp">
         <item name="android:windowBackground">@drawable/background_splash</item>

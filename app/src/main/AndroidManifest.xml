@@ -31,6 +31,13 @@
             android:label="@string/app_name"
             android:theme="@style/Theme.MyApp" />
         <activity android:name=".ui.detail.DetailActivity" />
+        <activity
+            android:name=".ui.addkey.AddKeyActivity"
+            android:label="@string/title_add_key"
+            android:theme="@style/Theme.MyApp.PrimaryActionBar" />
+        <activity android:name=".ui.editlocation.EditLocationActivity"
+            android:label="@string/title_edit_location"
+            android:theme="@style/Theme.MyApp.PrimaryActionBar"/>
     </application>
 
 </manifest>
