@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import dagger.hilt.android.AndroidEntryPoint
 import dev.namhyun.geokey.R
+import dev.namhyun.geokey.model.Key
 import dev.namhyun.geokey.model.LocationData
 import dev.namhyun.geokey.ui.editlocation.EditLocationActivity
 import kotlinx.android.synthetic.main.activity_add_key.*
@@ -21,13 +22,15 @@ class AddKeyActivity : AppCompatActivity(R.layout.activity_add_key) {
     private val viewModel by viewModels<AddKeyViewModel>()
 
     private var locationData: LocationData? = null
+    private var keyId: String? = null
 
     private val openEditLocation = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         when (result.resultCode) {
             Activity.RESULT_OK -> {
-                updateLocation(result.data!!)
+                locationData = result.data?.getParcelableExtra(EXTRA_LOCATION_DATA)
+                updateLocation()
             }
         }
     }
@@ -48,7 +51,12 @@ class AddKeyActivity : AppCompatActivity(R.layout.activity_add_key) {
         btn_add.setOnClickListener {
             val name = edit_name.editText!!.text.toString()
             val key = edit_key.editText!!.text.toString()
-            viewModel.createKey(name, key, locationData!!)
+
+            if (keyId == null) {
+                viewModel.createKey(name, key, locationData!!)
+            } else {
+                viewModel.updateKey(keyId!!, name, key, locationData!!)
+            }
         }
 
         btn_cancel.setOnClickListener { onBackPressed() }
@@ -73,10 +81,27 @@ class AddKeyActivity : AppCompatActivity(R.layout.activity_add_key) {
             }
         })
 
-        if (!intent.hasExtra(EXTRA_LOCATION_DATA)) {
-            throw IllegalAccessError("Require EXTRA_LOCATION_DATA extra")
+        if (!intent.hasExtra(EXTRA_LOCATION_DATA)
+            and !intent.hasExtra(EXTRA_KEY_ID)
+            and !intent.hasExtra(EXTRA_KEY)
+        ) {
+            throw IllegalAccessError("Require EXTRA_LOCATION_DATA or EXTRA_KEY_ID and EXTRA_KEY extra")
         }
-        updateLocation(intent)
+        if (intent.hasExtra(EXTRA_LOCATION_DATA)) {
+            locationData = intent.getParcelableExtra(EXTRA_LOCATION_DATA)
+        } else if (intent.hasExtra(EXTRA_KEY_ID) && intent.hasExtra(EXTRA_KEY)) {
+            val key: Key = intent.getParcelableExtra(EXTRA_KEY)!!
+
+            keyId = intent.getStringExtra(EXTRA_KEY_ID)!!
+            locationData = LocationData(key.address, key.lat, key.lon)
+
+            edit_name.editText!!.setText(key.name)
+            edit_key.editText!!.setText(key.key)
+
+            supportActionBar?.title = getString(R.string.title_edit_key)
+            btn_add.text = getString(R.string.action_edit)
+        }
+        updateLocation()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -89,17 +114,25 @@ class AddKeyActivity : AppCompatActivity(R.layout.activity_add_key) {
         }
     }
 
-    private fun updateLocation(intent: Intent) {
-        locationData = intent.getParcelableExtra(EXTRA_LOCATION_DATA)
+    private fun updateLocation() {
         edit_location.editText?.setText(locationData?.address!!)
     }
 
     companion object {
         const val EXTRA_LOCATION_DATA = "extra_location_data"
+        const val EXTRA_KEY_ID = "extra_key_id"
+        const val EXTRA_KEY = "extra_key"
 
         fun openActivity(context: Context, locationData: LocationData) {
             val intent = Intent(context, AddKeyActivity::class.java)
             intent.putExtra(EXTRA_LOCATION_DATA, locationData)
+            context.startActivity(intent)
+        }
+
+        fun openActivity(context: Context, keyId: String, key: Key) {
+            val intent = Intent(context, AddKeyActivity::class.java)
+            intent.putExtra(EXTRA_KEY_ID, keyId)
+            intent.putExtra(EXTRA_KEY, key)
             context.startActivity(intent)
         }
     }

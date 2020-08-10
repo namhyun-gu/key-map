@@ -23,4 +23,6 @@ class AddKeyRepository @Inject constructor(
     val keyDatabase: KeyDatabase
 ) {
     suspend fun createKey(key: Key) = keyDatabase.createKey(key)
+
+    suspend fun updateKey(id: String, key: Key) = keyDatabase.updateKey(id, key)
 }

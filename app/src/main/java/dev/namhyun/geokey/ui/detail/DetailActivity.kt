@@ -23,15 +23,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.naver.maps.geometry.LatLng
-import com.naver.maps.map.CameraPosition
-import com.naver.maps.map.CameraUpdate
-import com.naver.maps.map.MapFragment
-import com.naver.maps.map.NaverMap
-import com.naver.maps.map.OnMapReadyCallback
+import com.naver.maps.map.*
 import dagger.hilt.android.AndroidEntryPoint
 import dev.namhyun.geokey.R
-import dev.namhyun.geokey.model.Document
-import dev.namhyun.geokey.model.Key
+import dev.namhyun.geokey.ui.addkey.AddKeyActivity
 import dev.namhyun.geokey.util.latLng
 import kotlinx.android.synthetic.main.activity_detail.*
 
@@ -94,7 +89,7 @@ class DetailActivity : AppCompatActivity(R.layout.activity_detail), OnMapReadyCa
             R.id.action_edit -> {
                 if (viewModel.keyData.value != null) {
                     val keyDocument = viewModel.keyData.value!!
-                    showEditKeySheet(keyDocument)
+                    AddKeyActivity.openActivity(this, keyDocument.id, keyDocument.value)
                 }
                 true
             }
@@ -106,12 +101,6 @@ class DetailActivity : AppCompatActivity(R.layout.activity_detail), OnMapReadyCa
         naverMap = map
         map.setLayerGroupEnabled(NaverMap.LAYER_GROUP_BUILDING, true)
         map.locationOverlay.isVisible = true
-    }
-
-    private fun showEditKeySheet(keyDocument: Document<Key>) {
-        EditKeyDialogFragment(keyDocument) {
-            viewModel.readKey(keyDocument.id)
-        }.show(supportFragmentManager, "editKeySheet")
     }
 
     private fun buildDeleteDialog(name: String, onDelete: () -> Unit): AlertDialog {

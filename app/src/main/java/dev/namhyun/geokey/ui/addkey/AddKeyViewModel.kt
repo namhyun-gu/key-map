@@ -33,4 +33,23 @@ class AddKeyViewModel @ViewModelInject constructor(
             addKeyFormData.value = AddKeyFormState.ValidData
         }
     }
+
+    fun updateKey(id: String, name: String, key: String, location: LocationData) {
+        val invalidItems = mutableListOf<String>()
+        if (name.trim().isEmpty()) {
+            invalidItems.add("name")
+        }
+        if (key.trim().isEmpty()) {
+            invalidItems.add("key")
+        }
+        if (invalidItems.isNotEmpty()) {
+            addKeyFormData.value = AddKeyFormState.InvalidData(invalidItems)
+            return
+        }
+        val keyData = Key(name = name, key = key, locationData = location)
+        viewModelScope.launch {
+            addKeyRepository.updateKey(id, keyData)
+            addKeyFormData.value = AddKeyFormState.ValidData
+        }
+    }
 }
