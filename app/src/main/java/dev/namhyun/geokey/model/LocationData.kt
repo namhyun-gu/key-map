@@ -25,8 +25,7 @@ data class LocationData(val address: String, val lat: Double, val lon: Double) :
         parcel.readString()!!,
         parcel.readDouble(),
         parcel.readDouble()
-    ) {
-    }
+    )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(address)

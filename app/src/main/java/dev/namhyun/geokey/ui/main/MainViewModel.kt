@@ -31,7 +31,7 @@ import dev.namhyun.geokey.util.launchOnViewModelScope
 import timber.log.Timber
 
 class MainViewModel @ViewModelInject constructor(
-    private val mainRepository: MainRepository
+  private val mainRepository: MainRepository
 ) : ViewModel() {
     val locationData = mainRepository.getLastLocation().switchMap {
         launchOnViewModelScope {

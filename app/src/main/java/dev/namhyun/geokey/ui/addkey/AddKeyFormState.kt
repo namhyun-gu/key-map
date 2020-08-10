@@ -22,5 +22,4 @@ sealed class AddKeyFormState {
     class InvalidData(val invalidItem: List<String>) : AddKeyFormState()
 
     object ValidData : AddKeyFormState()
-
 }

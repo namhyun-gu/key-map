@@ -20,7 +20,7 @@ import dev.namhyun.geokey.model.Key
 import javax.inject.Inject
 
 class AddKeyRepository @Inject constructor(
-    val keyDatabase: KeyDatabase
+  val keyDatabase: KeyDatabase
 ) {
     suspend fun createKey(key: Key) = keyDatabase.createKey(key)
 

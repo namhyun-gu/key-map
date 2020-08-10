@@ -26,14 +26,14 @@ import dev.namhyun.geokey.repository.DetailRepository
 import kotlinx.coroutines.launch
 
 class DetailViewModel @ViewModelInject constructor(
-    private val detailRepository: DetailRepository
+  private val detailRepository: DetailRepository
 ) : ViewModel() {
     val keyData = MutableLiveData<Document<Key>>()
 
     fun readKey(id: String) = viewModelScope.launch {
         when (val resource = detailRepository.readKey(id)) {
             is Resource.Success -> {
-                keyData.postValue(resource.data)
+                keyData.postValue(resource.data!!)
             }
         }
     }

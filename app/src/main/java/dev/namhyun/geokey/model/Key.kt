@@ -19,11 +19,11 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class Key(
-    val name: String,
-    val key: String,
-    val lat: Double,
-    val lon: Double,
-    val address: String
+  val name: String,
+  val key: String,
+  val lat: Double,
+  val lon: Double,
+  val address: String
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
@@ -31,8 +31,7 @@ data class Key(
         parcel.readDouble(),
         parcel.readDouble(),
         parcel.readString()!!
-    ) {
-    }
+    )
 
     constructor() : this("", "", 0.0, 0.0, "")
 

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2020 Namhyun, Gu
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package dev.namhyun.geokey.repository
 
 import androidx.lifecycle.MutableLiveData
@@ -8,12 +23,12 @@ import com.skydoves.sandwich.onSuccess
 import dev.namhyun.geokey.model.LocationData
 import dev.namhyun.geokey.network.GeocodingClient
 import dev.namhyun.geokey.util.getAddress
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 class EditLocationRepository @Inject constructor(
-    val geocodingClient: GeocodingClient
+  val geocodingClient: GeocodingClient
 ) {
     suspend fun reverseGeocoding(lat: Double, lon: Double, error: (String) -> Unit) =
         withContext(Dispatchers.IO) {

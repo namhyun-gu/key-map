@@ -36,10 +36,10 @@ object RepositoryModule {
     @Provides
     @ActivityRetainedScoped
     fun provideMainRepository(
-        locationDataSource: LocationDataSource,
-        networkStateDataSource: NetworkStateDataSource,
-        geocodingClient: GeocodingClient,
-        keyDatabase: KeyDatabase
+      locationDataSource: LocationDataSource,
+      networkStateDataSource: NetworkStateDataSource,
+      geocodingClient: GeocodingClient,
+      keyDatabase: KeyDatabase
     ): MainRepository {
         return MainRepository(
             locationDataSource,
@@ -52,7 +52,7 @@ object RepositoryModule {
     @Provides
     @ActivityRetainedScoped
     fun provideDetailRepository(
-        keyDatabase: KeyDatabase
+      keyDatabase: KeyDatabase
     ): DetailRepository {
         return DetailRepository(keyDatabase)
     }
@@ -60,7 +60,7 @@ object RepositoryModule {
     @Provides
     @ActivityRetainedScoped
     fun provideAddKeyRepository(
-        keyDatabase: KeyDatabase
+      keyDatabase: KeyDatabase
     ): AddKeyRepository {
         return AddKeyRepository(keyDatabase)
     }
@@ -68,7 +68,7 @@ object RepositoryModule {
     @Provides
     @ActivityRetainedScoped
     fun provideEditLocationRepository(
-        geocodingClient: GeocodingClient
+      geocodingClient: GeocodingClient
     ): EditLocationRepository {
         return EditLocationRepository(geocodingClient)
     }

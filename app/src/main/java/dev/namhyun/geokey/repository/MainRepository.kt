@@ -30,16 +30,16 @@ import dev.namhyun.geokey.model.LocationData
 import dev.namhyun.geokey.model.NetworkState
 import dev.namhyun.geokey.network.GeocodingClient
 import dev.namhyun.geokey.util.getAddress
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 class MainRepository @Inject constructor(
-    val locationDataSource: LocationDataSource,
-    val networkStateDataSource: NetworkStateDataSource,
-    val geocodingClient: GeocodingClient,
-    val keyDatabase: KeyDatabase
+  val locationDataSource: LocationDataSource,
+  val networkStateDataSource: NetworkStateDataSource,
+  val geocodingClient: GeocodingClient,
+  val keyDatabase: KeyDatabase
 ) {
     fun getLastLocation(): LiveData<Location> {
         return liveData {
