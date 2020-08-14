@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package dev.namhyun.geokey.data
+package dev.namhyun.geokey.data.local
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -21,7 +21,7 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
-import dev.namhyun.geokey.model.Location
+import dev.namhyun.geokey.model.LocationModel
 import dev.namhyun.geokey.util.safeOffer
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -31,23 +31,24 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
-class LocationDataSourceImpl(context: Context) : LocationDataSource {
+class LocationDataSourceImpl(context: Context) :
+    LocationDataSource {
     private val locationClient = LocationServices.getFusedLocationProviderClient(context)
 
     private var locationCallback: LocationCallback? = null
 
     @SuppressLint("MissingPermission")
-    override suspend fun getLastLocation(): Location {
+    override suspend fun getLastLocation(): LocationModel {
         return suspendCoroutine { cont ->
             locationClient.lastLocation
-                .addOnSuccessListener { cont.resume(Location(it.latitude, it.longitude)) }
+                .addOnSuccessListener { cont.resume(LocationModel("", it.latitude, it.longitude)) }
                 .addOnFailureListener { cont.resumeWithException(it) }
         }
     }
 
     @SuppressLint("MissingPermission")
     @ExperimentalCoroutinesApi
-    override fun getLocationUpdates(): Flow<Location> {
+    override fun getLocationUpdates(): Flow<LocationModel> {
         return callbackFlow {
             if (locationCallback == null) {
                 locationCallback = object : LocationCallback() {
@@ -55,7 +56,13 @@ class LocationDataSourceImpl(context: Context) : LocationDataSource {
                         super.onLocationResult(result)
                         result ?: return
                         val lastLocation = result.lastLocation
-                        channel.safeOffer(Location(lastLocation.latitude, lastLocation.longitude))
+                        channel.safeOffer(
+                            LocationModel(
+                                "",
+                                lastLocation.latitude,
+                                lastLocation.longitude
+                            )
+                        )
                     }
                 }
             }

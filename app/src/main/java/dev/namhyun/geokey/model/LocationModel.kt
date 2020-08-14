@@ -20,7 +20,7 @@ import android.os.Parcelable
 
 data class Location(val lat: Double, val lon: Double)
 
-data class LocationData(val address: String, val lat: Double, val lon: Double) : Parcelable {
+data class LocationModel(val address: String, val lat: Double, val lon: Double) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
         parcel.readDouble(),
@@ -37,12 +37,12 @@ data class LocationData(val address: String, val lat: Double, val lon: Double) :
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<LocationData> {
-        override fun createFromParcel(parcel: Parcel): LocationData {
-            return LocationData(parcel)
+    companion object CREATOR : Parcelable.Creator<LocationModel> {
+        override fun createFromParcel(parcel: Parcel): LocationModel {
+            return LocationModel(parcel)
         }
 
-        override fun newArray(size: Int): Array<LocationData?> {
+        override fun newArray(size: Int): Array<LocationModel?> {
             return arrayOfNulls(size)
         }
     }

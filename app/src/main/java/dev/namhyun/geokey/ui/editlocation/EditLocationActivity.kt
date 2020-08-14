@@ -31,7 +31,7 @@ import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
 import dagger.hilt.android.AndroidEntryPoint
 import dev.namhyun.geokey.R
-import dev.namhyun.geokey.model.LocationData
+import dev.namhyun.geokey.model.LocationModel
 import dev.namhyun.geokey.ui.addkey.AddKeyActivity
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.activity_main.*
@@ -43,7 +43,7 @@ class EditLocationActivity : AppCompatActivity(R.layout.activity_edit_location),
 
     private lateinit var naverMap: NaverMap
 
-    private var locationData: LocationData? = null
+    private var locationModel: LocationModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +52,7 @@ class EditLocationActivity : AppCompatActivity(R.layout.activity_edit_location),
             setDisplayHomeAsUpEnabled(true)
         }
 
-        viewModel.locationData.observe(this, Observer {
+        viewModel.location.observe(this, Observer {
             updateLocation(it)
         })
     }
@@ -62,7 +62,7 @@ class EditLocationActivity : AppCompatActivity(R.layout.activity_edit_location),
         if (!intent.hasExtra(AddKeyActivity.EXTRA_LOCATION_DATA)) {
             throw IllegalAccessError("Require EXTRA_LOCATION_DATA extra")
         }
-        locationData = intent.getParcelableExtra(AddKeyActivity.EXTRA_LOCATION_DATA)
+        locationModel = intent.getParcelableExtra(AddKeyActivity.EXTRA_LOCATION_DATA)
         (supportFragmentManager.findFragmentById(R.id.map_fragment) as MapFragment)
             .getMapAsync(this)
     }
@@ -80,7 +80,7 @@ class EditLocationActivity : AppCompatActivity(R.layout.activity_edit_location),
             }
             R.id.action_done -> {
                 val intent = Intent()
-                intent.putExtra(AddKeyActivity.EXTRA_LOCATION_DATA, locationData!!)
+                intent.putExtra(AddKeyActivity.EXTRA_LOCATION_DATA, locationModel!!)
                 setResult(Activity.RESULT_OK, intent)
                 finish()
                 true
@@ -97,14 +97,14 @@ class EditLocationActivity : AppCompatActivity(R.layout.activity_edit_location),
             viewModel.updateLocation(latLng.latitude, latLng.longitude)
         }
 
-        tv_current_location.text = locationData?.address!!
-        updateMap(LatLng(locationData?.lat!!, locationData?.lon!!))
+        tv_current_location.text = locationModel?.address!!
+        updateMap(LatLng(locationModel?.lat!!, locationModel?.lon!!))
     }
 
-    private fun updateLocation(locationData: LocationData) {
-        this.locationData = locationData
-        tv_current_location.text = locationData.address
-        naverMap.locationOverlay.position = LatLng(locationData.lat, locationData.lon)
+    private fun updateLocation(locationModel: LocationModel) {
+        this.locationModel = locationModel
+        tv_current_location.text = locationModel.address
+        naverMap.locationOverlay.position = LatLng(locationModel.lat, locationModel.lon)
     }
 
     private fun updateMap(latLng: LatLng) {

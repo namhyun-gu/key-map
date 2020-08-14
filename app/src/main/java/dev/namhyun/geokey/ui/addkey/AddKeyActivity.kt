@@ -28,7 +28,7 @@ import androidx.lifecycle.Observer
 import dagger.hilt.android.AndroidEntryPoint
 import dev.namhyun.geokey.R
 import dev.namhyun.geokey.model.Key
-import dev.namhyun.geokey.model.LocationData
+import dev.namhyun.geokey.model.LocationModel
 import dev.namhyun.geokey.ui.editlocation.EditLocationActivity
 import kotlinx.android.synthetic.main.activity_add_key.*
 
@@ -36,7 +36,7 @@ import kotlinx.android.synthetic.main.activity_add_key.*
 class AddKeyActivity : AppCompatActivity(R.layout.activity_add_key) {
     private val viewModel by viewModels<AddKeyViewModel>()
 
-    private var locationData: LocationData? = null
+    private var locationModel: LocationModel? = null
     private var keyId: String? = null
 
     private val openEditLocation = registerForActivityResult(
@@ -44,7 +44,7 @@ class AddKeyActivity : AppCompatActivity(R.layout.activity_add_key) {
     ) { result ->
         when (result.resultCode) {
             Activity.RESULT_OK -> {
-                locationData = result.data?.getParcelableExtra(EXTRA_LOCATION_DATA)
+                locationModel = result.data?.getParcelableExtra(EXTRA_LOCATION_DATA)
                 updateLocation()
             }
         }
@@ -59,7 +59,7 @@ class AddKeyActivity : AppCompatActivity(R.layout.activity_add_key) {
 
         edit_location.setEndIconOnClickListener {
             val intent = Intent(this, EditLocationActivity::class.java)
-            intent.putExtra(EXTRA_LOCATION_DATA, locationData!!)
+            intent.putExtra(EXTRA_LOCATION_DATA, locationModel!!)
             openEditLocation.launch(intent)
         }
 
@@ -67,16 +67,12 @@ class AddKeyActivity : AppCompatActivity(R.layout.activity_add_key) {
             val name = edit_name.editText!!.text.toString()
             val key = edit_key.editText!!.text.toString()
 
-            if (keyId == null) {
-                viewModel.createKey(name, key, locationData!!)
-            } else {
-                viewModel.updateKey(keyId!!, name, key, locationData!!)
-            }
+            viewModel.saveKey(keyId, name, key, locationModel!!)
         }
 
         btn_cancel.setOnClickListener { onBackPressed() }
 
-        viewModel.addKeyFormData.observe(this, Observer {
+        viewModel.formState.observe(this, Observer {
             edit_name.error = ""
             edit_key.error = ""
 
@@ -103,12 +99,12 @@ class AddKeyActivity : AppCompatActivity(R.layout.activity_add_key) {
             throw IllegalAccessError("Require EXTRA_LOCATION_DATA or EXTRA_KEY_ID and EXTRA_KEY extra")
         }
         if (intent.hasExtra(EXTRA_LOCATION_DATA)) {
-            locationData = intent.getParcelableExtra(EXTRA_LOCATION_DATA)
+            locationModel = intent.getParcelableExtra(EXTRA_LOCATION_DATA)
         } else if (intent.hasExtra(EXTRA_KEY_ID) && intent.hasExtra(EXTRA_KEY)) {
             val key: Key = intent.getParcelableExtra(EXTRA_KEY)!!
 
             keyId = intent.getStringExtra(EXTRA_KEY_ID)!!
-            locationData = LocationData(key.address, key.lat, key.lon)
+            locationModel = LocationModel(key.address, key.lat, key.lon)
 
             edit_name.editText!!.setText(key.name)
             edit_key.editText!!.setText(key.key)
@@ -130,7 +126,7 @@ class AddKeyActivity : AppCompatActivity(R.layout.activity_add_key) {
     }
 
     private fun updateLocation() {
-        edit_location.editText?.setText(locationData?.address!!)
+        edit_location.editText?.setText(locationModel?.address!!)
     }
 
     companion object {
@@ -138,9 +134,9 @@ class AddKeyActivity : AppCompatActivity(R.layout.activity_add_key) {
         const val EXTRA_KEY_ID = "extra_key_id"
         const val EXTRA_KEY = "extra_key"
 
-        fun openActivity(context: Context, locationData: LocationData) {
+        fun openActivity(context: Context, locationModel: LocationModel) {
             val intent = Intent(context, AddKeyActivity::class.java)
-            intent.putExtra(EXTRA_LOCATION_DATA, locationData)
+            intent.putExtra(EXTRA_LOCATION_DATA, locationModel)
             context.startActivity(intent)
         }
 

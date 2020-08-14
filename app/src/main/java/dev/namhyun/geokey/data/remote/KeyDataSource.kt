@@ -13,14 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package dev.namhyun.geokey.data
+package dev.namhyun.geokey.data.remote
 
-import dev.namhyun.geokey.model.NetworkState
+import dev.namhyun.geokey.model.Document
+import dev.namhyun.geokey.model.Key
 import kotlinx.coroutines.flow.Flow
 
-interface NetworkStateDataSource {
+interface KeyDataSource {
 
-    fun getState(): NetworkState
+    suspend fun addKey(key: Key): String
 
-    fun getStateUpdates(): Flow<NetworkState>
+    suspend fun getKey(id: String): Document<Key>
+
+    fun getKeys(): Flow<List<Document<Key>>>
+
+    suspend fun updateKey(id: String, key: Key): String
+
+    suspend fun deleteKey(id: String): Boolean
 }

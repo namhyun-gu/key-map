@@ -13,15 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package dev.namhyun.geokey.util
+package dev.namhyun.geokey.domain
 
-import java.util.concurrent.CancellationException
+import dev.namhyun.geokey.model.Result
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.SendChannel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flowOn
 
 @ExperimentalCoroutinesApi
-fun <E> SendChannel<E>.safeOffer(value: E) = !isClosedForSend && try {
-    offer(value)
-} catch (e: CancellationException) {
-    false
+abstract class FlowUseCase<in P, R>(private val coroutineDispatcher: CoroutineDispatcher) {
+    operator fun invoke(parameters: P): Flow<Result<R>> = execute(parameters)
+        .catch { e -> emit(Result.Error(Exception(e))) }
+        .flowOn(coroutineDispatcher)
+
+    protected abstract fun execute(parameters: P): Flow<Result<R>>
 }

@@ -13,16 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package dev.namhyun.geokey.util
+package dev.namhyun.geokey.domain.key
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
+import dev.namhyun.geokey.di.IoDispatcher
+import dev.namhyun.geokey.domain.UseCase
+import dev.namhyun.geokey.repository.KeyRepository
+import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
 
-inline fun <T> ViewModel.launchOnViewModelScope(crossinline block: suspend () -> LiveData<T>): LiveData<T> {
-    return liveData(viewModelScope.coroutineContext + Dispatchers.IO) {
-        emitSource(block())
+class DeleteKeyUseCase @Inject constructor(
+  private val keyRepository: KeyRepository,
+  @IoDispatcher ioDispatcher: CoroutineDispatcher
+) : UseCase<String, Unit>(ioDispatcher) {
+
+    override suspend fun execute(parameters: String) {
+        keyRepository.deleteKey(parameters)
     }
 }

@@ -17,13 +17,13 @@ package dev.namhyun.geokey.ui.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.naver.maps.geometry.LatLng
+import com.naver.maps.geometry.LatLngBounds
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.MapFragment
@@ -35,16 +35,18 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.namhyun.geokey.R
 import dev.namhyun.geokey.model.Document
 import dev.namhyun.geokey.model.Key
-import dev.namhyun.geokey.model.LocationData
-import dev.namhyun.geokey.model.Resource
+import dev.namhyun.geokey.model.LocationModel
 import dev.namhyun.geokey.ui.adapter.KeyAdapter
 import dev.namhyun.geokey.ui.addkey.AddKeyActivity
 import dev.namhyun.geokey.ui.detail.DetailActivity
 import dev.namhyun.geokey.ui.detail.DetailActivity.Companion.EXTRA_KEY_ID
+import dev.namhyun.geokey.util.KeyUtil
+import dev.namhyun.geokey.util.latLng
 import kotlinx.android.synthetic.main.activity_main.*
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallback {
+
     private val viewModel by viewModels<MainViewModel>()
     private val mapMarkers: MutableList<Marker> = mutableListOf()
 
@@ -54,27 +56,19 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initViews()
-        viewModel.keyData.observe(this, Observer {
-            if (it is Resource.Success) {
-                keyAdapter.addKeys(it.data)
-            } else {
-                Toast.makeText(this, R.string.msg_fetch_keys_error, Toast.LENGTH_SHORT).show()
+
+        viewModel.keys.observe(this, Observer {
+            if (it != null) {
+                keyAdapter.addKeys(it)
             }
         })
 
-//        viewModel.networkStateData.observe(this, Observer {
-//            layout_not_connected.visibility =
-//                if (it is NetworkState.Available) View.GONE else View.VISIBLE
-//        })
-
-        viewModel.markerData.observe(this, Observer {
-            updateMarker(it)
-        })
-
-        viewModel.locationData.observe(this, Observer {
-            updateAddress(it.address)
-            updateAdapter(it)
-            updateMapCamera(it)
+        viewModel.location.observe(this, Observer {
+            if (it != null) {
+                updateAddress(it.address)
+                updateAdapter(it)
+                updateMapCamera(it)
+            }
         })
     }
 
@@ -84,14 +78,14 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
             setLayerGroupEnabled(NaverMap.LAYER_GROUP_BUILDING, true)
             locationOverlay.isVisible = true
             addOnCameraIdleListener {
-                viewModel.updateMarker(naverMap.contentRegion)
+                updateMarker(naverMap.contentRegion)
             }
         }
     }
 
     private fun initViews() {
         fab.setOnClickListener {
-            val location = viewModel.locationData.value
+            val location = viewModel.location.value
             if (location != null) {
                 AddKeyActivity.openActivity(this, location)
             }
@@ -112,11 +106,11 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
         tv_current_location.text = address
     }
 
-    private fun updateAdapter(location: LocationData) {
+    private fun updateAdapter(location: LocationModel) {
         keyAdapter.setLocation(location)
     }
 
-    private fun updateMapCamera(location: LocationData) {
+    private fun updateMapCamera(location: LocationModel) {
         val latLng = LatLng(location.lat, location.lon)
         naverMap.locationOverlay.position = latLng
         naverMap.moveCamera(
@@ -126,16 +120,27 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
         )
     }
 
-    // TODO 화면 회전 시 naverMap 객체가 초기화 되어 이용할 수 없음.
-    private fun updateMarker(keys: Map<LatLng, List<Document<Key>>>) {
-        if (mapMarkers.isNotEmpty()) {
-            mapMarkers.forEach { it.map = null }
-            mapMarkers.clear()
-        }
+    private fun updateMarker(region: Array<LatLng>) {
+        val bounds = LatLngBounds.Builder().apply {
+            for (idx in 1..4) {
+                include(region[idx])
+            }
+        }.build()
 
-        keys.forEach { (latLng, keys) ->
-            val marker = createMarker(latLng, keys)
-            mapMarkers.add(marker)
+        val keys = viewModel.keys.value
+        if (keys != null) {
+            val keysInBounds = keys.filter { bounds.contains(it.value.latLng) }
+            val nearKeys = KeyUtil.collectNearKeys(keysInBounds)
+
+            if (mapMarkers.isNotEmpty()) {
+                mapMarkers.forEach { it.map == null }
+                mapMarkers.clear()
+            }
+
+            nearKeys.forEach { (latLng, keys) ->
+                val marker = createMarker(latLng, keys)
+                mapMarkers.add(marker)
+            }
         }
     }
 

@@ -13,27 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package dev.namhyun.geokey.network
+package dev.namhyun.geokey.repository
 
-import com.skydoves.sandwich.ApiResponse
-import com.skydoves.sandwich.request
-import dev.namhyun.geokey.BuildConfig
-import dev.namhyun.geokey.model.GeocodingResponse
+import dev.namhyun.geokey.data.remote.KeyDataSource
+import dev.namhyun.geokey.model.Key
 import javax.inject.Inject
+import javax.inject.Singleton
 
-class GeocodingClient @Inject constructor(
-  private val geocodingService: GeocodingService
+@Singleton
+class KeyRepository @Inject constructor(
+  private val keyDataSource: KeyDataSource
 ) {
 
-    fun reverseGeocode(
-      lat: Double,
-      lon: Double,
-      onResult: (response: ApiResponse<GeocodingResponse>) -> Unit
-    ) {
-        geocodingService.reverseGeocode(
-            BuildConfig.NCP_CLIENT_ID,
-            BuildConfig.NCP_CLIENT_SECRET,
-            "$lon,$lat"
-        ).request(onResult)
-    }
+    suspend fun addKey(key: Key) = keyDataSource.addKey(key)
+
+    suspend fun getKey(id: String) = keyDataSource.getKey(id)
+
+    fun getKeys() = keyDataSource.getKeys()
+
+    suspend fun updateKey(id: String, key: Key) = keyDataSource.updateKey(id, key)
+
+    suspend fun deleteKey(id: String) = keyDataSource.deleteKey(id)
 }

@@ -13,18 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package dev.namhyun.geokey.repository
+package dev.namhyun.geokey.data.local
 
-import dev.namhyun.geokey.data.KeyDatabase
-import dev.namhyun.geokey.model.Key
-import javax.inject.Inject
+import dev.namhyun.geokey.model.LocationModel
+import kotlinx.coroutines.flow.Flow
 
-class DetailRepository @Inject constructor(
-  val keyDatabase: KeyDatabase
-) {
-    suspend fun readKey(id: String) = keyDatabase.readKey(id)
+interface LocationDataSource {
 
-    suspend fun updateKey(id: String, key: Key) = keyDatabase.updateKey(id, key)
+    suspend fun getLastLocation(): LocationModel
 
-    suspend fun deleteKey(id: String) = keyDatabase.deleteKey(id)
+    fun getLocationUpdates(): Flow<LocationModel>
 }

@@ -35,8 +35,8 @@ data class Key(
 
     constructor() : this("", "", 0.0, 0.0, "")
 
-    constructor(name: String, key: String, locationData: LocationData) :
-            this(name, key, locationData.lat, locationData.lon, locationData.address)
+    constructor(name: String, key: String, locationModel: LocationModel) :
+            this(name, key, locationModel.lat, locationModel.lon, locationModel.address)
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(name)

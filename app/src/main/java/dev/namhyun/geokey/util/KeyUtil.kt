@@ -15,29 +15,9 @@
  */
 package dev.namhyun.geokey.util
 
-import android.location.Location
 import com.naver.maps.geometry.LatLng
 import dev.namhyun.geokey.model.Document
 import dev.namhyun.geokey.model.Key
-import dev.namhyun.geokey.model.LocationData
-
-fun Key.distanceTo(location: LocationData): Float {
-    val it = Location("").apply {
-        latitude = lat
-        longitude = lon
-    }
-    val target = Location("").apply {
-        latitude = location.lat
-        longitude = location.lon
-    }
-    return target.distanceTo(it)
-}
-
-val Key.latLng: LatLng
-    get() = LatLng(lat, lon)
-
-val Key.locationData: LocationData
-    get() = LocationData(address, lat, lon)
 
 object KeyUtil {
 

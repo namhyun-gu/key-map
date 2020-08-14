@@ -16,48 +16,53 @@
 package dev.namhyun.geokey.ui.main
 
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.switchMap
-import com.naver.maps.geometry.LatLng
-import com.naver.maps.geometry.LatLngBounds
-import dev.namhyun.geokey.model.Document
-import dev.namhyun.geokey.model.Key
-import dev.namhyun.geokey.model.Resource
-import dev.namhyun.geokey.repository.MainRepository
-import dev.namhyun.geokey.util.KeyUtil
-import dev.namhyun.geokey.util.latLng
-import dev.namhyun.geokey.util.launchOnViewModelScope
+import androidx.lifecycle.liveData
+import dev.namhyun.geokey.domain.key.GetKeysUseCase
+import dev.namhyun.geokey.domain.location.GetAddressUseCase
+import dev.namhyun.geokey.domain.location.GetLocationsUseCase
+import dev.namhyun.geokey.model.LocationModel
+import dev.namhyun.geokey.model.Result
+import dev.namhyun.geokey.model.data
+import dev.namhyun.geokey.model.succeeded
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import timber.log.Timber
 
+@ExperimentalCoroutinesApi
 class MainViewModel @ViewModelInject constructor(
-  private val mainRepository: MainRepository
+  getKeysUseCase: GetKeysUseCase,
+  getLocationsUseCase: GetLocationsUseCase,
+  getAddressUseCase: GetAddressUseCase
 ) : ViewModel() {
-    val locationData = mainRepository.getLastLocation().switchMap {
-        launchOnViewModelScope {
-            mainRepository.reverseGeocoding(it.lat, it.lon) {
-                Timber.e(it)
+    val keys = liveData {
+        emit(null)
+        getKeysUseCase(Unit).collect {
+            if (it.succeeded) {
+                emit(it.data)
             }
         }
     }
 
-    val networkStateData = mainRepository.getNetworkState()
-    val keyData = mainRepository.readAllKey()
-    val markerData = MutableLiveData<Map<LatLng, List<Document<Key>>>>()
-
-    fun updateMarker(region: Array<LatLng>) {
-        val bounds = LatLngBounds.Builder().apply {
-            for (idx in 1..4) {
-                include(region[idx])
+    val location = liveData {
+        emit(null)
+        getLocationsUseCase(Unit).collect { locationResult ->
+            when (locationResult) {
+                is Result.Success -> {
+                    when (val addressResult = getAddressUseCase(locationResult.data)) {
+                        is Result.Success -> {
+                            val (_, lat, lon) = locationResult.data
+                            emit(LocationModel(addressResult.data, lat, lon))
+                        }
+                        is Result.Error -> {
+                            Timber.e(addressResult.exception)
+                        }
+                    }
+                }
+                is Result.Error -> {
+                    Timber.e(locationResult.exception)
+                }
             }
-        }.build()
-
-        val keys = keyData.value
-        if (keys != null && keys is Resource.Success) {
-            val keysInBounds = keys.data
-                .filter { bounds.contains(it.value.latLng) }
-            val nearKeys = KeyUtil.collectNearKeys(keysInBounds)
-            markerData.value = nearKeys
         }
     }
 }

@@ -15,8 +15,39 @@
  */
 package dev.namhyun.geokey.util
 
+import android.location.Location
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.geometry.LatLngBounds
+import dev.namhyun.geokey.model.Key
+import dev.namhyun.geokey.model.LocationModel
+import java.util.concurrent.CancellationException
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.SendChannel
+
+@ExperimentalCoroutinesApi
+fun <E> SendChannel<E>.safeOffer(value: E) = !isClosedForSend && try {
+    offer(value)
+} catch (e: CancellationException) {
+    false
+}
+
+fun Key.distanceTo(location: LocationModel): Float {
+    val it = Location("").apply {
+        latitude = lat
+        longitude = lon
+    }
+    val target = Location("").apply {
+        latitude = location.lat
+        longitude = location.lon
+    }
+    return target.distanceTo(it)
+}
+
+val Key.latLng: LatLng
+    get() = LatLng(lat, lon)
+
+val Key.locationModel: LocationModel
+    get() = LocationModel(address, lat, lon)
 
 fun Float.meter(): String {
     return if (this > 1000.0) {

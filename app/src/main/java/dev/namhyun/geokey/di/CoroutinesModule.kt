@@ -15,31 +15,30 @@
  */
 package dev.namhyun.geokey.di
 
-import android.content.Context
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dev.namhyun.geokey.data.LocationDataSource
-import dev.namhyun.geokey.data.LocationDataSourceImpl
-import dev.namhyun.geokey.data.NetworkStateDataSource
-import dev.namhyun.geokey.data.NetworkStateDataSourceImpl
-import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 
-@Module
 @InstallIn(ApplicationComponent::class)
-object DataSourceModule {
+@Module
+class CoroutinesModule {
 
+    @DefaultDispatcher
     @Provides
-    @Singleton
-    fun provideLocationDataSource(@ApplicationContext context: Context): LocationDataSource {
-        return LocationDataSourceImpl(context)
-    }
+    fun providesDefaultDispatcher(): CoroutineDispatcher = Dispatchers.Default
 
+    @IoDispatcher
     @Provides
-    @Singleton
-    fun provideNetworkStateDataSource(@ApplicationContext context: Context): NetworkStateDataSource {
-        return NetworkStateDataSourceImpl(context)
-    }
+    fun providesIoDispatcher(): CoroutineDispatcher = Dispatchers.IO
+
+    @MainDispatcher
+    @Provides
+    fun providesMainDispatcher(): CoroutineDispatcher = Dispatchers.Main
+
+    @MainImmediateDispatcher
+    @Provides
+    fun providesMainImmediateDispatcher(): CoroutineDispatcher = Dispatchers.Main.immediate
 }

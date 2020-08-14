@@ -51,7 +51,7 @@ class DetailActivity : AppCompatActivity(R.layout.activity_detail), OnMapReadyCa
         (supportFragmentManager.findFragmentById(R.id.map_fragment) as MapFragment)
             .getMapAsync(this)
 
-        viewModel.keyData.observe(this, Observer {
+        viewModel.key.observe(this, Observer {
             val value = it.value
 
             tv_name.text = value.name
@@ -81,8 +81,8 @@ class DetailActivity : AppCompatActivity(R.layout.activity_detail), OnMapReadyCa
                 true
             }
             R.id.action_delete -> {
-                if (viewModel.keyData.value != null) {
-                    val keyDocument = viewModel.keyData.value!!
+                if (viewModel.key.value != null) {
+                    val keyDocument = viewModel.key.value!!
                     buildDeleteDialog(keyDocument.value.name) {
                         viewModel.deleteKey(keyDocument.id)
                         onBackPressed()
@@ -91,8 +91,8 @@ class DetailActivity : AppCompatActivity(R.layout.activity_detail), OnMapReadyCa
                 true
             }
             R.id.action_edit -> {
-                if (viewModel.keyData.value != null) {
-                    val keyDocument = viewModel.keyData.value!!
+                if (viewModel.key.value != null) {
+                    val keyDocument = viewModel.key.value!!
                     AddKeyActivity.openActivity(this, keyDocument.id, keyDocument.value)
                 }
                 true

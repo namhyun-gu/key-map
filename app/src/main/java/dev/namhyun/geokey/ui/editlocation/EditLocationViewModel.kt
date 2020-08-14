@@ -19,25 +19,28 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.switchMap
-import dev.namhyun.geokey.model.LocationData
-import dev.namhyun.geokey.repository.EditLocationRepository
-import dev.namhyun.geokey.util.launchOnViewModelScope
+import androidx.lifecycle.viewModelScope
+import dev.namhyun.geokey.domain.location.GetAddressUseCase
+import dev.namhyun.geokey.model.LocationModel
+import dev.namhyun.geokey.model.Result
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class EditLocationViewModel @ViewModelInject constructor(
-  private val editLocationRepository: EditLocationRepository
+  private val getAddressUseCase: GetAddressUseCase
 ) : ViewModel() {
-    private val _locationData = MutableLiveData<LocationData>()
-    val locationData: LiveData<LocationData> = _locationData.switchMap {
-        launchOnViewModelScope {
-            editLocationRepository.reverseGeocoding(it.lat, it.lon) {
-                Timber.e(it)
-            }
-        }
-    }
+    private val _location = MutableLiveData<LocationModel>()
+    val location: LiveData<LocationModel> = _location
 
     fun updateLocation(lat: Double, lon: Double) {
-        _locationData.postValue(LocationData("", lat, lon))
+        viewModelScope.launch {
+            when (val result = getAddressUseCase(LocationModel("", lat, lon))) {
+                is Result.Success -> _location.postValue(LocationModel(result.data, lat, lon))
+                is Result.Error -> {
+                    Timber.e(result.exception)
+                    _location.postValue(LocationModel("", lat, lon))
+                }
+            }
+        }
     }
 }

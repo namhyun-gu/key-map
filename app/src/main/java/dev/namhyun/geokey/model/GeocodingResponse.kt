@@ -20,8 +20,74 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class GeocodingResponse(
   val status: Status,
-  val results: List<Result>
-)
+  val results: List<GeocodingResult>
+) {
+    fun getAddress(): String? {
+        return if (results.isNotEmpty()) {
+            when (val result = results[0]) {
+                is RoadAddrResult -> {
+                    val (region, land) = result
+                    val builder = StringBuilder()
+                    if (region.area1.name.isNotEmpty()) {
+                        builder.append(region.area1.name)
+                    }
+                    if (region.area2.name.isNotEmpty()) {
+                        builder.append(" " + (region.area2.name))
+                    }
+                    if (land.name.isNotEmpty()) {
+                        builder.append(" " + land.name)
+                    }
+                    if (land.number1.isNotEmpty()) {
+                        builder.append(" " + land.number1)
+                    }
+                    if (region.area3.name.isNotEmpty()) {
+                        val building =
+                            if (land.addition0.value.isNotEmpty()) ", ${land.addition0.value}"
+                            else ""
+                        builder.append(" (${region.area3.name}$building)")
+                    }
+                    builder.toString()
+                }
+                is LegalCodeResult -> {
+                    val (region) = result
+                    val builder = StringBuilder()
+                    if (region.area1.name.isNotEmpty()) {
+                        builder.append(region.area1.name)
+                    }
+                    if (region.area2.name.isNotEmpty()) {
+                        builder.append(" " + (region.area2.name))
+                    }
+                    if (region.area3.name.isNotEmpty()) {
+                        builder.append(" " + region.area3.name)
+                    }
+                    if (region.area4.name.isNotEmpty()) {
+                        builder.append(" " + region.area4.name)
+                    }
+                    builder.toString()
+                }
+                is AdmCodeResult -> {
+                    val (region) = result
+                    val builder = StringBuilder()
+                    if (region.area1.name.isNotEmpty()) {
+                        builder.append(region.area1.name)
+                    }
+                    if (region.area2.name.isNotEmpty()) {
+                        builder.append(" " + (region.area2.name))
+                    }
+                    if (region.area3.name.isNotEmpty()) {
+                        builder.append(" " + region.area3.name)
+                    }
+                    if (region.area4.name.isNotEmpty()) {
+                        builder.append(" " + region.area4.name)
+                    }
+                    builder.toString()
+                }
+            }
+        } else {
+            null
+        }
+    }
+}
 
 @JsonClass(generateAdapter = true)
 data class Status(
@@ -36,13 +102,14 @@ enum class OperationName {
     roadaddr
 }
 
-sealed class Result(val name: OperationName)
+sealed class GeocodingResult(val name: OperationName)
 
-data class LegalCodeResult(val region: Region) : Result(OperationName.legalcode)
+data class LegalCodeResult(val region: Region) : GeocodingResult(OperationName.legalcode)
 
-data class AdmCodeResult(val region: Region) : Result(OperationName.admcode)
+data class AdmCodeResult(val region: Region) : GeocodingResult(OperationName.admcode)
 
-data class RoadAddrResult(val region: Region, val land: Land) : Result(OperationName.roadaddr)
+data class RoadAddrResult(val region: Region, val land: Land) :
+    GeocodingResult(OperationName.roadaddr)
 
 @JsonClass(generateAdapter = true)
 data class Region(

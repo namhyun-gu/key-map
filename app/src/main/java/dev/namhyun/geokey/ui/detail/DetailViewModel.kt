@@ -19,26 +19,35 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.namhyun.geokey.domain.key.DeleteKeyUseCase
+import dev.namhyun.geokey.domain.key.GetKeyUseCase
 import dev.namhyun.geokey.model.Document
 import dev.namhyun.geokey.model.Key
-import dev.namhyun.geokey.model.Resource
-import dev.namhyun.geokey.repository.DetailRepository
+import dev.namhyun.geokey.model.Result
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class DetailViewModel @ViewModelInject constructor(
-  private val detailRepository: DetailRepository
+  private val getKeyUseCase: GetKeyUseCase,
+  private val deleteKeyUseCase: DeleteKeyUseCase
 ) : ViewModel() {
-    val keyData = MutableLiveData<Document<Key>>()
+    val key = MutableLiveData<Document<Key>>()
 
     fun readKey(id: String) = viewModelScope.launch {
-        when (val resource = detailRepository.readKey(id)) {
-            is Resource.Success -> {
-                keyData.postValue(resource.data!!)
+        when (val result = getKeyUseCase(id)) {
+            is Result.Success -> {
+                key.postValue(result.data!!)
+            }
+            is Result.Error -> {
+                Timber.e(result.exception)
             }
         }
     }
 
     fun deleteKey(id: String) = viewModelScope.launch {
-        detailRepository.deleteKey(id)
+        val result = deleteKeyUseCase(id)
+        if (result is Result.Error) {
+            Timber.e(result.exception)
+        }
     }
 }

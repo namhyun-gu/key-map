@@ -13,25 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package dev.namhyun.geokey.data
+package dev.namhyun.geokey.data.remote
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
 import dev.namhyun.geokey.model.Document
 import dev.namhyun.geokey.model.Key
-import dev.namhyun.geokey.model.Resource
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 
-class KeyDatabaseImpl : KeyDatabase {
-    private val db = Firebase.firestore.collection("keys")
-
-    override suspend fun createKey(key: Key): String {
+@ExperimentalCoroutinesApi
+class FirestoreKeyDataSource(
+  val firestore: FirebaseFirestore
+) : KeyDataSource {
+    override suspend fun addKey(key: Key): String {
         return suspendCoroutine { cont ->
-            db.add(key)
+            firestore
+                .collection(KEY_COLLECTION)
+                .add(key)
                 .addOnSuccessListener {
                     cont.resume(it.id)
                 }.addOnFailureListener {
@@ -40,37 +43,44 @@ class KeyDatabaseImpl : KeyDatabase {
         }
     }
 
-    override suspend fun readKey(id: String): Resource<Document<Key>> {
+    override suspend fun getKey(id: String): Document<Key> {
         return suspendCoroutine { cont ->
-            db.document(id).get()
+            firestore
+                .collection(KEY_COLLECTION)
+                .document(id).get()
                 .addOnSuccessListener {
-                    cont.resume(Resource.Success(Document(it.id, it.toObject(Key::class.java)!!)))
+                    cont.resume(Document(it.id, it.toObject(Key::class.java)!!))
                 }.addOnFailureListener {
                     cont.resumeWithException(it)
                 }
         }
     }
 
-    override fun readAllKey(): LiveData<Resource<List<Document<Key>>>> {
-        val liveData = MutableLiveData<Resource<List<Document<Key>>>>()
-        db.addSnapshotListener { snapshot, e ->
-            if (e != null) {
-                liveData.value = Resource.Error(e)
-            } else {
-                if (snapshot != null) {
-                    val documents = snapshot.documents.map {
-                        Document(it.id, it.toObject(Key::class.java)!!)
+    override fun getKeys(): Flow<List<Document<Key>>> {
+        return callbackFlow {
+            firestore
+                .collection(KEY_COLLECTION)
+                .addSnapshotListener { snapshot, e ->
+                    if (e != null) {
+                        channel.offer(emptyList())
+                    } else {
+                        if (snapshot != null) {
+                            val documents = snapshot.documents.map {
+                                Document(it.id, it.toObject(Key::class.java)!!)
+                            }
+                            channel.offer(documents)
+                        }
                     }
-                    liveData.value = Resource.Success(documents)
                 }
-            }
+            awaitClose { /* No-op */ }
         }
-        return liveData
     }
 
     override suspend fun updateKey(id: String, key: Key): String {
         return suspendCoroutine { cont ->
-            db.document(id).set(key)
+            firestore
+                .collection(KEY_COLLECTION)
+                .document(id).set(key)
                 .addOnSuccessListener {
                     cont.resume(id)
                 }.addOnFailureListener {
@@ -81,12 +91,18 @@ class KeyDatabaseImpl : KeyDatabase {
 
     override suspend fun deleteKey(id: String): Boolean {
         return suspendCoroutine { cont ->
-            db.document(id).delete()
+            firestore
+                .collection(KEY_COLLECTION)
+                .document(id).delete()
                 .addOnSuccessListener {
                     cont.resume(true)
                 }.addOnFailureListener {
                     cont.resumeWithException(it)
                 }
         }
+    }
+
+    companion object {
+        private const val KEY_COLLECTION = "keys"
     }
 }

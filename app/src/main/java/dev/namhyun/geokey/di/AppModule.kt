@@ -15,6 +15,9 @@
  */
 package dev.namhyun.geokey.di
 
+import android.content.Context
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -22,68 +25,61 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.namhyun.geokey.data.local.LocationDataSource
+import dev.namhyun.geokey.data.local.LocationDataSourceImpl
+import dev.namhyun.geokey.data.remote.FirestoreKeyDataSource
+import dev.namhyun.geokey.data.remote.GeocodingService
+import dev.namhyun.geokey.data.remote.KeyDataSource
 import dev.namhyun.geokey.model.AdmCodeResult
+import dev.namhyun.geokey.model.GeocodingResult
 import dev.namhyun.geokey.model.LegalCodeResult
 import dev.namhyun.geokey.model.OperationName
-import dev.namhyun.geokey.model.Result
 import dev.namhyun.geokey.model.RoadAddrResult
-import dev.namhyun.geokey.network.GeocodingClient
-import dev.namhyun.geokey.network.GeocodingService
-import javax.inject.Qualifier
+import dev.namhyun.geokey.repository.KeyRepository
 import javax.inject.Singleton
-import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class GeocodingRetrofit
-
-@Module
 @InstallIn(ApplicationComponent::class)
-object NetworkModule {
+@Module
+class AppModule {
 
-    @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder()
-            .build()
+    @Provides
+    fun provideKeyDataSource(): KeyDataSource {
+        return FirestoreKeyDataSource(Firebase.firestore)
     }
 
-    @Provides
     @Singleton
-    fun provideGeocodingMoshi(): Moshi {
-        return Moshi.Builder()
+    @Provides
+    fun provideKeyRepository(keyDataSource: KeyDataSource): KeyRepository {
+        return KeyRepository(keyDataSource)
+    }
+
+    @Singleton
+    @Provides
+    fun provideLocationDataSource(@ApplicationContext context: Context): LocationDataSource {
+        return LocationDataSourceImpl(context)
+    }
+
+    @Singleton
+    @Provides
+    fun provideGeocodingService(): GeocodingService {
+        val moshi = Moshi.Builder()
             .add(
-                PolymorphicJsonAdapterFactory.of(Result::class.java, "name")
+                PolymorphicJsonAdapterFactory.of(GeocodingResult::class.java, "name")
                     .withSubtype(LegalCodeResult::class.java, OperationName.legalcode.name)
                     .withSubtype(AdmCodeResult::class.java, OperationName.admcode.name)
                     .withSubtype(RoadAddrResult::class.java, OperationName.roadaddr.name)
             )
             .add(KotlinJsonAdapterFactory())
             .build()
-    }
 
-    @Provides
-    @Singleton
-    @GeocodingRetrofit
-    fun provideGeocodingRetrofit(okHttpClient: OkHttpClient, moshi: Moshi): Retrofit {
         return Retrofit.Builder()
-            .client(okHttpClient)
             .baseUrl("https://naveropenapi.apigw.ntruss.com")
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideGeocodingService(@GeocodingRetrofit retrofit: Retrofit): GeocodingService {
-        return retrofit.create(GeocodingService::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideGeocodingClient(geocodingService: GeocodingService): GeocodingClient {
-        return GeocodingClient(geocodingService)
+            .create(GeocodingService::class.java)
     }
 }

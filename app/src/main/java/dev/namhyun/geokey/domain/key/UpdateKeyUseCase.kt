@@ -13,22 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package dev.namhyun.geokey.data
+package dev.namhyun.geokey.domain.key
 
-import androidx.lifecycle.LiveData
+import dev.namhyun.geokey.di.IoDispatcher
+import dev.namhyun.geokey.domain.UseCase
 import dev.namhyun.geokey.model.Document
 import dev.namhyun.geokey.model.Key
-import dev.namhyun.geokey.model.Resource
+import dev.namhyun.geokey.repository.KeyRepository
+import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
 
-interface KeyDatabase {
+class UpdateKeyUseCase @Inject constructor(
+  private val repository: KeyRepository,
+  @IoDispatcher ioDispatcher: CoroutineDispatcher
+) : UseCase<Document<Key>, Unit>(ioDispatcher) {
 
-    suspend fun createKey(key: Key): String
-
-    suspend fun readKey(id: String): Resource<Document<Key>>
-
-    fun readAllKey(): LiveData<Resource<List<Document<Key>>>>
-
-    suspend fun updateKey(id: String, key: Key): String
-
-    suspend fun deleteKey(id: String): Boolean
+    override suspend fun execute(parameters: Document<Key>) {
+        repository.updateKey(parameters.id, parameters.value)
+    }
 }

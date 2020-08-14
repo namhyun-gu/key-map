@@ -13,18 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package dev.namhyun.geokey.network
+package dev.namhyun.geokey.domain.key
 
-import okhttp3.Interceptor
-import okhttp3.Response
-import timber.log.Timber
+import dev.namhyun.geokey.di.IoDispatcher
+import dev.namhyun.geokey.domain.UseCase
+import dev.namhyun.geokey.model.Key
+import dev.namhyun.geokey.repository.KeyRepository
+import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
 
-class HttpResponseInterceptor : Interceptor {
-    override fun intercept(chain: Interceptor.Chain): Response {
-        val request = chain.request()
-        val response = chain.proceed(request)
-        Timber.d("response: $response")
-        Timber.d("responseBody: ${response.body!!.string()}")
-        return response
+class AddKeyUseCase @Inject constructor(
+  private val repository: KeyRepository,
+  @IoDispatcher ioDispatcher: CoroutineDispatcher
+) : UseCase<Key, Unit>(ioDispatcher) {
+
+    override suspend fun execute(parameters: Key) {
+        repository.addKey(parameters)
     }
 }

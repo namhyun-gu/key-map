@@ -13,16 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package dev.namhyun.geokey.repository
+package dev.namhyun.geokey.domain.key
 
-import dev.namhyun.geokey.data.KeyDatabase
+import dev.namhyun.geokey.di.IoDispatcher
+import dev.namhyun.geokey.domain.UseCase
+import dev.namhyun.geokey.model.Document
 import dev.namhyun.geokey.model.Key
+import dev.namhyun.geokey.repository.KeyRepository
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
 
-class AddKeyRepository @Inject constructor(
-  val keyDatabase: KeyDatabase
-) {
-    suspend fun createKey(key: Key) = keyDatabase.createKey(key)
+class GetKeyUseCase @Inject constructor(
+  private val repository: KeyRepository,
+  @IoDispatcher ioDispatcher: CoroutineDispatcher
+) : UseCase<String, Document<Key>>(ioDispatcher) {
 
-    suspend fun updateKey(id: String, key: Key) = keyDatabase.updateKey(id, key)
+    override suspend fun execute(parameters: String): Document<Key> {
+        return repository.getKey(parameters)
+    }
 }

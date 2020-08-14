@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 import dev.namhyun.geokey.R
 import dev.namhyun.geokey.model.Document
 import dev.namhyun.geokey.model.Key
-import dev.namhyun.geokey.model.LocationData
+import dev.namhyun.geokey.model.LocationModel
 import dev.namhyun.geokey.util.distanceTo
 import dev.namhyun.geokey.util.meter
 import kotlinx.android.synthetic.main.item_key.view.*
@@ -32,7 +32,7 @@ class KeyAdapter(
 ) : RecyclerView.Adapter<KeyAdapter.KeyViewHolder>() {
 
     private val items = mutableListOf<Document<Key>>()
-    private var currentLocation: LocationData? = null
+    private var currentLocation: LocationModel? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): KeyViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_key, parent, false)
@@ -74,7 +74,7 @@ class KeyAdapter(
         })
     }
 
-    fun setLocation(location: LocationData) {
+    fun setLocation(location: LocationModel) {
         this.currentLocation = location
         sortByLocation()
         notifyDataSetChanged()

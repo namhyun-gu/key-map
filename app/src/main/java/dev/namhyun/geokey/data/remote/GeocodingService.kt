@@ -13,14 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package dev.namhyun.geokey.data
+package dev.namhyun.geokey.data.remote
 
-import dev.namhyun.geokey.model.Location
-import kotlinx.coroutines.flow.Flow
+import dev.namhyun.geokey.model.GeocodingResponse
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Query
 
-interface LocationDataSource {
+interface GeocodingService {
 
-    suspend fun getLastLocation(): Location
-
-    fun getLocationUpdates(): Flow<Location>
+    @GET("map-reversegeocode/v2/gc")
+    suspend fun reverseGeocode(
+      @Header("X-NCP-APIGW-API-KEY-ID") clientId: String,
+      @Header("X-NCP-APIGW-API-KEY") clientSecret: String,
+      @Query("coords") coords: String,
+      @Query("orders") orders: String = "roadaddr,legalcode,admcode",
+      @Query("output") output: String = "json"
+    ): GeocodingResponse
 }
