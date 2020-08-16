@@ -95,7 +95,6 @@ dependencies {
     // Network
     implementation("com.squareup.retrofit2:retrofit:${Versions.retrofitVersion}")
     implementation("com.squareup.okhttp3:logging-interceptor:${Versions.okhttpVersion}")
-    implementation("com.github.skydoves:sandwich:1.0.1")
 
     // Google Services
     implementation("com.google.android.gms:play-services-location:17.0.0")
