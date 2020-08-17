@@ -40,6 +40,9 @@ class DetailActivity : AppCompatActivity(R.layout.activity_detail), OnMapReadyCa
 
     private lateinit var naverMap: NaverMap
 
+    private var requireCameraUpdate: Boolean = false
+    private var latLng: LatLng? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setSupportActionBar(toolbar)
@@ -102,9 +105,13 @@ class DetailActivity : AppCompatActivity(R.layout.activity_detail), OnMapReadyCa
     }
 
     override fun onMapReady(map: NaverMap) {
-        naverMap = map
-        map.setLayerGroupEnabled(NaverMap.LAYER_GROUP_BUILDING, true)
-        map.locationOverlay.isVisible = true
+        naverMap = map.apply {
+            locationOverlay.isVisible = true
+            setLayerGroupEnabled(NaverMap.LAYER_GROUP_BUILDING, true)
+        }
+        if (requireCameraUpdate) {
+            updateMap(latLng!!)
+        }
     }
 
     private fun buildDeleteDialog(name: String, onDelete: () -> Unit): AlertDialog {
@@ -125,15 +132,21 @@ class DetailActivity : AppCompatActivity(R.layout.activity_detail), OnMapReadyCa
     }
 
     private fun updateMap(latLng: LatLng) {
-        naverMap.locationOverlay.position = latLng
-        naverMap.moveCamera(
-            CameraUpdate.toCameraPosition(
-                CameraPosition(
-                    latLng,
-                    17.0
+        if (this::naverMap.isInitialized) {
+            naverMap.locationOverlay.position = latLng
+            naverMap.moveCamera(
+                CameraUpdate.toCameraPosition(
+                    CameraPosition(
+                        latLng,
+                        17.0
+                    )
                 )
             )
-        )
+            requireCameraUpdate = false
+        } else {
+            this.latLng = latLng
+            requireCameraUpdate = true
+        }
     }
 
     companion object {

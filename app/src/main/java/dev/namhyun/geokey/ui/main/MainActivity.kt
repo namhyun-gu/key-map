@@ -53,6 +53,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
     private lateinit var keyAdapter: KeyAdapter
     private lateinit var naverMap: NaverMap
 
+    private var requireCameraUpdate: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initViews()
@@ -73,13 +75,16 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
     }
 
     override fun onMapReady(map: NaverMap) {
-        naverMap = map
-        map.apply {
-            setLayerGroupEnabled(NaverMap.LAYER_GROUP_BUILDING, true)
+        naverMap = map.apply {
             locationOverlay.isVisible = true
+
+            setLayerGroupEnabled(NaverMap.LAYER_GROUP_BUILDING, true)
             addOnCameraIdleListener {
                 updateMarker(naverMap.contentRegion)
             }
+        }
+        if (requireCameraUpdate) {
+            updateMapCamera(viewModel.location.value!!)
         }
     }
 
@@ -111,13 +116,18 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
     }
 
     private fun updateMapCamera(location: LocationModel) {
-        val latLng = LatLng(location.lat, location.lon)
-        naverMap.locationOverlay.position = latLng
-        naverMap.moveCamera(
-            CameraUpdate.toCameraPosition(
-                CameraPosition(latLng, 17.0)
+        if (this::naverMap.isInitialized) {
+            val latLng = LatLng(location.lat, location.lon)
+            naverMap.locationOverlay.position = latLng
+            naverMap.moveCamera(
+                CameraUpdate.toCameraPosition(
+                    CameraPosition(latLng, 17.0)
+                )
             )
-        )
+            requireCameraUpdate = false
+        } else {
+            requireCameraUpdate = true
+        }
     }
 
     private fun updateMarker(region: Array<LatLng>) {
