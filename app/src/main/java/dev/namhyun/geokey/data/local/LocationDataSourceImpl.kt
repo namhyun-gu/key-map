@@ -23,13 +23,13 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import dev.namhyun.geokey.model.LocationModel
 import dev.namhyun.geokey.util.safeOffer
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 class LocationDataSourceImpl(context: Context) :
     LocationDataSource {
@@ -41,7 +41,11 @@ class LocationDataSourceImpl(context: Context) :
     override suspend fun getLastLocation(): LocationModel {
         return suspendCoroutine { cont ->
             locationClient.lastLocation
-                .addOnSuccessListener { cont.resume(LocationModel("", it.latitude, it.longitude)) }
+                .addOnSuccessListener {
+                    if (it != null) {
+                        cont.resume(LocationModel("", it.latitude, it.longitude))
+                    }
+                }
                 .addOnFailureListener { cont.resumeWithException(it) }
         }
     }
