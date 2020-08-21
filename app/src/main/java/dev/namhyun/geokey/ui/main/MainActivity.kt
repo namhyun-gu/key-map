@@ -15,7 +15,6 @@
  */
 package dev.namhyun.geokey.ui.main
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -39,7 +38,6 @@ import dev.namhyun.geokey.model.LocationModel
 import dev.namhyun.geokey.ui.adapter.KeyAdapter
 import dev.namhyun.geokey.ui.addkey.AddKeyActivity
 import dev.namhyun.geokey.ui.detail.DetailActivity
-import dev.namhyun.geokey.ui.detail.DetailActivity.Companion.EXTRA_KEY_ID
 import dev.namhyun.geokey.util.KeyUtil
 import dev.namhyun.geokey.util.latLng
 import kotlinx.android.synthetic.main.activity_main.*
@@ -96,7 +94,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
             }
         }
         keyAdapter = KeyAdapter {
-            openDetailKey(it.id)
+            DetailActivity.openActivity(this, it.id)
         }
 
         list_keys.layoutManager = LinearLayoutManager(this)
@@ -166,15 +164,9 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
         }
     }
 
-    private fun openDetailKey(keyId: String) {
-        val intent = Intent(this, DetailActivity::class.java)
-        intent.putExtra(EXTRA_KEY_ID, keyId)
-        startActivity(intent)
-    }
-
     private fun showMarkerSheet(keys: List<Document<Key>>) {
         MarkerDialogFragment(keys) {
-            openDetailKey(it.id)
+            DetailActivity.openActivity(this, it.id)
         }.show(supportFragmentManager, "markerSheet")
     }
 }

@@ -15,6 +15,8 @@
  */
 package dev.namhyun.geokey.ui.detail
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -151,5 +153,11 @@ class DetailActivity : AppCompatActivity(R.layout.activity_detail), OnMapReadyCa
 
     companion object {
         const val EXTRA_KEY_ID = "key_id"
+
+        fun openActivity(context: Context, keyId: String) {
+            val intent = Intent(context, DetailActivity::class.java)
+            intent.putExtra(EXTRA_KEY_ID, keyId)
+            context.startActivity(intent)
+        }
     }
 }
