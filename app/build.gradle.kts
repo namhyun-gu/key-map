@@ -9,14 +9,13 @@ plugins {
 }
 
 android {
-    compileSdkVersion(29)
+    compileSdkVersion(rootProject.extra["compileSdkVersion"] as Int)
     defaultConfig {
         applicationId = "dev.namhyun.geokey"
         minSdkVersion(rootProject.extra["minSdkVersion"] as Int)
         targetSdkVersion(rootProject.extra["targetSdkVersion"] as Int)
         versionCode = rootProject.extra["versionCode"] as Int
         versionName = rootProject.extra["versionName"] as String
-//        versionName = "git describe --tags --abbrev=0".runCommand()
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

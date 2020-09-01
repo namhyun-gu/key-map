@@ -2,8 +2,9 @@ import java.util.Properties
 import java.io.FileInputStream
 
 rootProject.extra.apply {
+    set("compileSdkVersion", 30)
     set("minSdkVersion", 23)
-    set("targetSdkVersion", 29)
+    set("targetSdkVersion", 30)
     set("versionCode", getVersionCode())
     set("versionName", "git describe --tags --abbrev=0".runCommand())
 
