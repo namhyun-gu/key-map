@@ -1,0 +1,35 @@
+ext.versions = [
+        compileSdkVersion: 30,
+        minSdkVersion    : 23,
+        targetSdkVersion : 30,
+        versionCode      : getVersionCode(),
+        versionName      : "git describe --tags --abbrev=0".execute([], project.rootDir).text.trim()
+]
+
+ext.params = [
+        NCP_CLIENT_ID        : getKey("NCP_CLIENT_ID"),
+        NCP_CLIENT_SECRET    : getKey("NCP_CLIENT_SECRET"),
+        KEYSTORE_PASSWORD    : getKey("KEYSTORE_PASSWORD"),
+        KEYSTORE_KEY_ALIAS   : getKey("KEYSTORE_KEY_ALIAS"),
+        KEYSTORE_KEY_PASSWORD: getKey("KEYSTORE_KEY_PASSWORD")
+]
+
+def getKey(propName) {
+    def file = rootProject.file("key.properties")
+    if (file.exists()) {
+        def properties = new Properties()
+        properties.load(new FileInputStream(file))
+        if (properties[propName] != null) {
+            return "${properties[propName]}"
+        }
+    }
+    return System.getenv(propName)
+}
+
+def getVersionCode() {
+    if (System.getenv("CI") == "true") {
+        return System.getenv("GITHUB_RUN_NUMBER").toInteger()
+    } else {
+        return Integer.parseInt("git rev-list --count HEAD".execute([], project.rootDir).text.trim())
+    }
+}
