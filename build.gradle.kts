@@ -4,12 +4,12 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:${Versions.gradleBuildTool}")
-        classpath(kotlin("gradle-plugin", version = Versions.kotlin))
-        classpath("com.google.dagger:hilt-android-gradle-plugin:${Versions.daggerHiltAndroidVersion}")
-        classpath("com.google.gms:google-services:${Versions.googleServices}")
-        classpath("com.google.firebase:firebase-crashlytics-gradle:${Versions.crashlytics}")
-        classpath("com.diffplug.spotless:spotless-plugin-gradle:${Versions.spotless}")
+        classpath(kotlin("gradle-plugin", version = "1.4.0"))
+        classpath("com.android.tools.build:gradle:4.0.1")
+        classpath("com.google.dagger:hilt-android-gradle-plugin:2.28-alpha")
+        classpath("com.google.gms:google-services:4.3.3")
+        classpath("com.google.firebase:firebase-crashlytics-gradle:2.2.1")
+        classpath("com.diffplug.spotless:spotless-plugin-gradle:4.0.1")
     }
 }
 
@@ -23,6 +23,7 @@ allprojects {
 }
 
 subprojects {
+    apply(from = rootProject.file("dependencies.gradle.kts"))
     apply(plugin = "com.diffplug.gradle.spotless")
 
     configure<com.diffplug.gradle.spotless.SpotlessExtension> {
