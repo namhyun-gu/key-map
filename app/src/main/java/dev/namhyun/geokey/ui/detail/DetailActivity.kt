@@ -23,7 +23,6 @@ import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.CameraUpdate
@@ -32,12 +31,14 @@ import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
 import dagger.hilt.android.AndroidEntryPoint
 import dev.namhyun.geokey.R
+import dev.namhyun.geokey.databinding.ActivityDetailBinding
 import dev.namhyun.geokey.ui.addkey.AddKeyActivity
 import dev.namhyun.geokey.util.latLng
-import kotlinx.android.synthetic.main.activity_detail.*
 
 @AndroidEntryPoint
 class DetailActivity : AppCompatActivity(R.layout.activity_detail), OnMapReadyCallback {
+    private lateinit var binding: ActivityDetailBinding
+
     private val viewModel by viewModels<DetailViewModel>()
 
     private lateinit var naverMap: NaverMap
@@ -47,7 +48,9 @@ class DetailActivity : AppCompatActivity(R.layout.activity_detail), OnMapReadyCa
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setSupportActionBar(toolbar)
+        binding = ActivityDetailBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.apply {
             title = ""
             setDisplayHomeAsUpEnabled(true)
@@ -56,12 +59,12 @@ class DetailActivity : AppCompatActivity(R.layout.activity_detail), OnMapReadyCa
         (supportFragmentManager.findFragmentById(R.id.map_fragment) as MapFragment)
             .getMapAsync(this)
 
-        viewModel.key.observe(this, Observer {
+        viewModel.key.observe(this, {
             val value = it.value
 
-            tv_name.text = value.name
-            tv_key.text = value.key
-            tv_location.text = value.address
+            binding.tvName.text = value.name
+            binding.tvKey.text = value.key
+            binding.tvLocation.text = value.address
 
             updateMap(value.latLng)
         })

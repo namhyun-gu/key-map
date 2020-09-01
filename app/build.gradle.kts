@@ -1,7 +1,6 @@
 plugins {
     id("com.android.application")
     kotlin("android")
-    kotlin("android.extensions")
     kotlin("kapt")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
@@ -58,11 +57,14 @@ android {
         exclude("META-INF/ASL2.0")
         exclude("META-INF/*.kotlin_module")
     }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
     // Kotlin
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.0")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.4.0")
 
     // Android
     implementation("androidx.core:core-ktx:1.3.1")

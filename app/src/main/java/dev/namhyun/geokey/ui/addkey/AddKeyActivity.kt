@@ -24,16 +24,17 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import dagger.hilt.android.AndroidEntryPoint
 import dev.namhyun.geokey.R
+import dev.namhyun.geokey.databinding.ActivityAddKeyBinding
 import dev.namhyun.geokey.model.Key
 import dev.namhyun.geokey.model.LocationModel
 import dev.namhyun.geokey.ui.editlocation.EditLocationActivity
-import kotlinx.android.synthetic.main.activity_add_key.*
 
 @AndroidEntryPoint
-class AddKeyActivity : AppCompatActivity(R.layout.activity_add_key) {
+class AddKeyActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityAddKeyBinding
+
     private val viewModel by viewModels<AddKeyViewModel>()
 
     private var locationModel: LocationModel? = null
@@ -52,37 +53,39 @@ class AddKeyActivity : AppCompatActivity(R.layout.activity_add_key) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setSupportActionBar(toolbar)
+        binding = ActivityAddKeyBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
         }
 
-        edit_location.setEndIconOnClickListener {
+        binding.editLocation.setEndIconOnClickListener {
             val intent = Intent(this, EditLocationActivity::class.java)
             intent.putExtra(EXTRA_LOCATION_DATA, locationModel!!)
             openEditLocation.launch(intent)
         }
 
-        btn_add.setOnClickListener {
-            val name = edit_name.editText!!.text.toString()
-            val key = edit_key.editText!!.text.toString()
+        binding.btnAdd.setOnClickListener {
+            val name = binding.editName.editText!!.text.toString()
+            val key = binding.editKey.editText!!.text.toString()
 
             viewModel.saveKey(keyId, name, key, locationModel!!)
         }
 
-        btn_cancel.setOnClickListener { onBackPressed() }
+        binding.btnCancel.setOnClickListener { onBackPressed() }
 
-        viewModel.formState.observe(this, Observer {
-            edit_name.error = ""
-            edit_key.error = ""
+        viewModel.formState.observe(this, {
+            binding.editName.error = ""
+            binding.editKey.error = ""
 
             when (it) {
                 is AddKeyFormState.InvalidData -> {
                     if (it.invalidItem.contains("name")) {
-                        edit_name.error = getString(R.string.msg_name_required)
+                        binding.editName.error = getString(R.string.msg_name_required)
                     }
                     if (it.invalidItem.contains("key")) {
-                        edit_key.error = getString(R.string.msg_key_required)
+                        binding.editKey.error = getString(R.string.msg_key_required)
                     }
                 }
                 AddKeyFormState.ValidData -> {
@@ -106,11 +109,11 @@ class AddKeyActivity : AppCompatActivity(R.layout.activity_add_key) {
             keyId = intent.getStringExtra(EXTRA_KEY_ID)!!
             locationModel = LocationModel(key.address, key.lat, key.lon)
 
-            edit_name.editText!!.setText(key.name)
-            edit_key.editText!!.setText(key.key)
+            binding.editName.editText!!.setText(key.name)
+            binding.editKey.editText!!.setText(key.key)
 
             supportActionBar?.title = getString(R.string.title_edit_key)
-            btn_add.text = getString(R.string.action_edit)
+            binding.btnAdd.text = getString(R.string.action_edit)
         }
         updateLocation()
     }
@@ -126,7 +129,7 @@ class AddKeyActivity : AppCompatActivity(R.layout.activity_add_key) {
     }
 
     private fun updateLocation() {
-        edit_location.editText?.setText(locationModel?.address!!)
+        binding.editLocation.editText?.setText(locationModel?.address!!)
     }
 
     companion object {

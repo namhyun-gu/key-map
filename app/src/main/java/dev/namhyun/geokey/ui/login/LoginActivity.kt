@@ -41,12 +41,15 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import dev.namhyun.geokey.R
+import dev.namhyun.geokey.databinding.ActivityLoginBinding
 import dev.namhyun.geokey.ui.main.MainActivity
-import kotlinx.android.synthetic.main.activity_login.*
 import timber.log.Timber
 
 @AndroidEntryPoint
-class LoginActivity : AppCompatActivity(R.layout.activity_login) {
+class LoginActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityLoginBinding
+
     private val viewModel by viewModels<LoginViewModel>()
     private val auth = Firebase.auth
 
@@ -121,6 +124,9 @@ class LoginActivity : AppCompatActivity(R.layout.activity_login) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         oneTapClient = Identity.getSignInClient(this)
         signInRequest = BeginSignInRequest.builder()
             .setGoogleIdTokenRequestOptions(
@@ -138,7 +144,7 @@ class LoginActivity : AppCompatActivity(R.layout.activity_login) {
 
         signInClient = GoogleSignIn.getClient(this, signInOptions)
 
-        login.setOnClickListener {
+        binding.login.setOnClickListener {
             setLoadingProgress(true)
             setLoginButtonEnable(false)
             signInWithGoogleSignIn()
@@ -163,11 +169,11 @@ class LoginActivity : AppCompatActivity(R.layout.activity_login) {
     }
 
     private fun setLoadingProgress(visible: Boolean) {
-        loading_progress.visibility = if (visible) View.VISIBLE else View.GONE
+        binding.loadingProgress.visibility = if (visible) View.VISIBLE else View.GONE
     }
 
     private fun setLoginButtonEnable(enable: Boolean) {
-        login.isEnabled = enable
+        binding.login.isEnabled = enable
     }
 
     private fun showFailedLoginToast() {

@@ -18,7 +18,6 @@ package dev.namhyun.geokey.ui.main
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.naver.maps.geometry.LatLng
@@ -32,6 +31,7 @@ import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import dagger.hilt.android.AndroidEntryPoint
 import dev.namhyun.geokey.R
+import dev.namhyun.geokey.databinding.ActivityMainBinding
 import dev.namhyun.geokey.model.Document
 import dev.namhyun.geokey.model.Key
 import dev.namhyun.geokey.model.LocationModel
@@ -40,10 +40,13 @@ import dev.namhyun.geokey.ui.addkey.AddKeyActivity
 import dev.namhyun.geokey.ui.detail.DetailActivity
 import dev.namhyun.geokey.util.KeyUtil
 import dev.namhyun.geokey.util.latLng
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallback {
+class MainActivity : AppCompatActivity(), OnMapReadyCallback {
+
+    private lateinit var binding: ActivityMainBinding
 
     private val viewModel by viewModels<MainViewModel>()
     private val mapMarkers: MutableList<Marker> = mutableListOf()
@@ -55,15 +58,18 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         initViews()
 
-        viewModel.keys.observe(this, Observer {
+        viewModel.keys.observe(this, {
             if (it != null) {
                 keyAdapter.addKeys(it)
             }
         })
 
-        viewModel.location.observe(this, Observer {
+        viewModel.location.observe(this, {
             if (it != null) {
                 updateAddress(it.address)
                 updateAdapter(it)
@@ -87,7 +93,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
     }
 
     private fun initViews() {
-        fab.setOnClickListener {
+        binding.fab.setOnClickListener {
             val location = viewModel.location.value
             if (location != null) {
                 AddKeyActivity.openActivity(this, location)
@@ -97,16 +103,16 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), OnMapReadyCallba
             DetailActivity.openActivity(this, it.id)
         }
 
-        list_keys.layoutManager = LinearLayoutManager(this)
-        list_keys.adapter = keyAdapter
-        list_keys.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
+        binding.listKeys.layoutManager = LinearLayoutManager(this)
+        binding.listKeys.adapter = keyAdapter
+        binding.listKeys.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
 
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map_fragment) as MapFragment
         mapFragment.getMapAsync(this)
     }
 
     private fun updateAddress(address: String) {
-        tv_current_location.text = address
+        binding.tvCurrentLocation.text = address
     }
 
     private fun updateAdapter(location: LocationModel) {
