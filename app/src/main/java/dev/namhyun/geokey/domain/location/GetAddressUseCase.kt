@@ -24,8 +24,8 @@ import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 
 class GetAddressUseCase @Inject constructor(
-  private val geocodingService: GeocodingService,
-  @IoDispatcher ioDispatcher: CoroutineDispatcher
+    private val geocodingService: GeocodingService,
+    @IoDispatcher ioDispatcher: CoroutineDispatcher
 ) : UseCase<LocationModel, String>(ioDispatcher) {
     override suspend fun execute(parameters: LocationModel): String {
         val coords = "${parameters.lon},${parameters.lat}"

@@ -26,7 +26,7 @@ import dev.namhyun.geokey.util.distanceTo
 import dev.namhyun.geokey.util.meter
 
 class KeyAdapter(
-  private val onItemSelected: ((Document<Key>) -> Unit)? = null
+    private val onItemSelected: ((Document<Key>) -> Unit)? = null
 ) : RecyclerView.Adapter<KeyAdapter.KeyViewHolder>() {
 
     private val items = mutableListOf<Document<Key>>()

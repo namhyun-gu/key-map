@@ -30,13 +30,13 @@ import dev.namhyun.geokey.model.Key
 import dev.namhyun.geokey.ui.adapter.KeyAdapter
 
 class MarkerDialogFragment(
-  private val keys: List<Document<Key>>,
-  private val onItemSelected: (Document<Key>) -> Unit
+    private val keys: List<Document<Key>>,
+    private val onItemSelected: (Document<Key>) -> Unit
 ) : BottomSheetDialogFragment() {
     override fun onCreateView(
-      inflater: LayoutInflater,
-      container: ViewGroup?,
-      savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         val binding = DialogMarkerSheetBinding.inflate(inflater, container, false)
         val keyAdapter = KeyAdapter(onItemSelected)

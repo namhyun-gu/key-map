@@ -29,8 +29,8 @@ import kotlinx.coroutines.flow.flow
 
 @ExperimentalCoroutinesApi
 class GetLocationsUseCase @Inject constructor(
-  private val locationDataSource: LocationDataSource,
-  @MainDispatcher mainDispatcher: CoroutineDispatcher
+    private val locationDataSource: LocationDataSource,
+    @MainDispatcher mainDispatcher: CoroutineDispatcher
 ) : FlowUseCase<Unit, LocationModel>(mainDispatcher) {
     override fun execute(parameters: Unit): Flow<Result<LocationModel>> {
         return flow {

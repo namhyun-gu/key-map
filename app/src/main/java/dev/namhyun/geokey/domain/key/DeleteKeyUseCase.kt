@@ -22,8 +22,8 @@ import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 
 class DeleteKeyUseCase @Inject constructor(
-  private val keyRepository: KeyRepository,
-  @IoDispatcher ioDispatcher: CoroutineDispatcher
+    private val keyRepository: KeyRepository,
+    @IoDispatcher ioDispatcher: CoroutineDispatcher
 ) : UseCase<String, Unit>(ioDispatcher) {
 
     override suspend fun execute(parameters: String) {

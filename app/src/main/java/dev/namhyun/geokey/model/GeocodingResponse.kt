@@ -19,8 +19,8 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class GeocodingResponse(
-  val status: Status,
-  val results: List<GeocodingResult>
+    val status: Status,
+    val results: List<GeocodingResult>
 ) {
     fun getAddress(): String? {
         return if (results.isNotEmpty()) {
@@ -91,9 +91,9 @@ data class GeocodingResponse(
 
 @JsonClass(generateAdapter = true)
 data class Status(
-  val code: Int,
-  val name: String,
-  val message: String
+    val code: Int,
+    val name: String,
+    val message: String
 )
 
 enum class OperationName {
@@ -113,11 +113,11 @@ data class RoadAddrResult(val region: Region, val land: Land) :
 
 @JsonClass(generateAdapter = true)
 data class Region(
-  val area0: Area,
-  val area1: Area,
-  val area2: Area,
-  val area3: Area,
-  val area4: Area
+    val area0: Area,
+    val area1: Area,
+    val area2: Area,
+    val area3: Area,
+    val area4: Area
 )
 
 @JsonClass(generateAdapter = true)
@@ -125,9 +125,9 @@ data class Area(val name: String)
 
 @JsonClass(generateAdapter = true)
 data class Land(
-  val name: String,
-  val number1: String,
-  val addition0: BuildingInfo
+    val name: String,
+    val number1: String,
+    val addition0: BuildingInfo
 )
 
 @JsonClass(generateAdapter = true)

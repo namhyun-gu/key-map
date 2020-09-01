@@ -23,8 +23,8 @@ import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 
 class AddKeyUseCase @Inject constructor(
-  private val repository: KeyRepository,
-  @IoDispatcher ioDispatcher: CoroutineDispatcher
+    private val repository: KeyRepository,
+    @IoDispatcher ioDispatcher: CoroutineDispatcher
 ) : UseCase<Key, Unit>(ioDispatcher) {
 
     override suspend fun execute(parameters: Key) {

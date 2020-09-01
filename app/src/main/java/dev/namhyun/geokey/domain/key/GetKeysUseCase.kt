@@ -29,8 +29,8 @@ import kotlinx.coroutines.flow.map
 
 @ExperimentalCoroutinesApi
 class GetKeysUseCase @Inject constructor(
-  private val repository: KeyRepository,
-  @IoDispatcher ioDispatcher: CoroutineDispatcher
+    private val repository: KeyRepository,
+    @IoDispatcher ioDispatcher: CoroutineDispatcher
 ) : FlowUseCase<Unit, List<Document<Key>>>(ioDispatcher) {
 
     override fun execute(parameters: Unit): Flow<Result<List<Document<Key>>>> {

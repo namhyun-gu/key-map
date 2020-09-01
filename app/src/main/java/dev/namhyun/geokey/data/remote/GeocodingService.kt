@@ -24,10 +24,10 @@ interface GeocodingService {
 
     @GET("map-reversegeocode/v2/gc")
     suspend fun reverseGeocode(
-      @Header("X-NCP-APIGW-API-KEY-ID") clientId: String,
-      @Header("X-NCP-APIGW-API-KEY") clientSecret: String,
-      @Query("coords") coords: String,
-      @Query("orders") orders: String = "roadaddr,legalcode,admcode",
-      @Query("output") output: String = "json"
+        @Header("X-NCP-APIGW-API-KEY-ID") clientId: String,
+        @Header("X-NCP-APIGW-API-KEY") clientSecret: String,
+        @Query("coords") coords: String,
+        @Query("orders") orders: String = "roadaddr,legalcode,admcode",
+        @Query("output") output: String = "json"
     ): GeocodingResponse
 }

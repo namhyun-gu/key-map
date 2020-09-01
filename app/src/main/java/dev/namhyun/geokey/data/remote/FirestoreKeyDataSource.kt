@@ -28,7 +28,7 @@ import kotlinx.coroutines.flow.callbackFlow
 
 @ExperimentalCoroutinesApi
 class FirestoreKeyDataSource(
-  val firestore: FirebaseFirestore
+    val firestore: FirebaseFirestore
 ) : KeyDataSource {
     override suspend fun addKey(key: Key): String {
         return suspendCoroutine { cont ->

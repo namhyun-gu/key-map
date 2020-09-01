@@ -29,8 +29,8 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class AddKeyViewModel @ViewModelInject constructor(
-  private val addKeyUseCase: AddKeyUseCase,
-  private val updateKeyUseCase: UpdateKeyUseCase
+    private val addKeyUseCase: AddKeyUseCase,
+    private val updateKeyUseCase: UpdateKeyUseCase
 ) : ViewModel() {
 
     val formState = MutableLiveData<AddKeyFormState>(AddKeyFormState.EmptyData)

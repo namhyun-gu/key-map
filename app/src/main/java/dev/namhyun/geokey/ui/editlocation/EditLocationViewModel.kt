@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class EditLocationViewModel @ViewModelInject constructor(
-  private val getAddressUseCase: GetAddressUseCase
+    private val getAddressUseCase: GetAddressUseCase
 ) : ViewModel() {
     private val _location = MutableLiveData<LocationModel>()
     val location: LiveData<LocationModel> = _location

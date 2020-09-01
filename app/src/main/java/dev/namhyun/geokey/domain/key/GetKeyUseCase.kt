@@ -24,8 +24,8 @@ import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 
 class GetKeyUseCase @Inject constructor(
-  private val repository: KeyRepository,
-  @IoDispatcher ioDispatcher: CoroutineDispatcher
+    private val repository: KeyRepository,
+    @IoDispatcher ioDispatcher: CoroutineDispatcher
 ) : UseCase<String, Document<Key>>(ioDispatcher) {
 
     override suspend fun execute(parameters: String): Document<Key> {

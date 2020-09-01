@@ -28,8 +28,8 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class DetailViewModel @ViewModelInject constructor(
-  private val getKeyUseCase: GetKeyUseCase,
-  private val deleteKeyUseCase: DeleteKeyUseCase
+    private val getKeyUseCase: GetKeyUseCase,
+    private val deleteKeyUseCase: DeleteKeyUseCase
 ) : ViewModel() {
     val key = MutableLiveData<Document<Key>>()
 

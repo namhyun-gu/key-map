@@ -31,9 +31,9 @@ import timber.log.Timber
 
 @ExperimentalCoroutinesApi
 class MainViewModel @ViewModelInject constructor(
-  getKeysUseCase: GetKeysUseCase,
-  getLocationsUseCase: GetLocationsUseCase,
-  getAddressUseCase: GetAddressUseCase
+    getKeysUseCase: GetKeysUseCase,
+    getLocationsUseCase: GetLocationsUseCase,
+    getAddressUseCase: GetAddressUseCase
 ) : ViewModel() {
     val keys = liveData {
         emit(null)

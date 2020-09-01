@@ -22,7 +22,7 @@ import javax.inject.Singleton
 
 @Singleton
 class KeyRepository @Inject constructor(
-  private val keyDataSource: KeyDataSource
+    private val keyDataSource: KeyDataSource
 ) {
 
     suspend fun addKey(key: Key) = keyDataSource.addKey(key)
