@@ -16,16 +16,14 @@
 package dev.namhyun.geokey.ui.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import dev.namhyun.geokey.R
+import dev.namhyun.geokey.databinding.ItemKeyBinding
 import dev.namhyun.geokey.model.Document
 import dev.namhyun.geokey.model.Key
 import dev.namhyun.geokey.model.LocationModel
 import dev.namhyun.geokey.util.distanceTo
 import dev.namhyun.geokey.util.meter
-import kotlinx.android.synthetic.main.item_key.view.*
 
 class KeyAdapter(
   private val onItemSelected: ((Document<Key>) -> Unit)? = null
@@ -35,23 +33,22 @@ class KeyAdapter(
     private var currentLocation: LocationModel? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): KeyViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_key, parent, false)
-        return KeyViewHolder(view)
+        return KeyViewHolder(ItemKeyBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun getItemCount(): Int = items.size
 
     override fun onBindViewHolder(holder: KeyViewHolder, position: Int) {
         val item = items[position]
-        holder.itemView.apply {
+        holder.binding.apply {
             val value = item.value
-            tv_name.text = value.name
-            tv_key.text = value.key
-            tv_location.text = value.address
+            tvName.text = value.name
+            tvKey.text = value.key
+            tvLocation.text = value.address
             if (currentLocation != null) {
-                tv_near_by.text = value.distanceTo(currentLocation!!).meter()
+                tvNearBy.text = value.distanceTo(currentLocation!!).meter()
             }
-            setOnClickListener {
+            root.setOnClickListener {
                 onItemSelected?.invoke(item)
             }
         }
@@ -67,11 +64,11 @@ class KeyAdapter(
     }
 
     private fun sortByLocation() {
-        items.sortWith(Comparator { o1, o2 ->
+        items.sortWith { o1, o2 ->
             val dis1 = o1.value.distanceTo(currentLocation!!)
             val dis2 = o2.value.distanceTo(currentLocation!!)
             dis1.compareTo(dis2)
-        })
+        }
     }
 
     fun setLocation(location: LocationModel) {
@@ -80,5 +77,5 @@ class KeyAdapter(
         notifyDataSetChanged()
     }
 
-    class KeyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    class KeyViewHolder(val binding: ItemKeyBinding) : RecyclerView.ViewHolder(binding.root)
 }

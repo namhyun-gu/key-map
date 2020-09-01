@@ -24,26 +24,24 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dev.namhyun.geokey.R
+import dev.namhyun.geokey.databinding.DialogMarkerSheetBinding
 import dev.namhyun.geokey.model.Document
 import dev.namhyun.geokey.model.Key
 import dev.namhyun.geokey.ui.adapter.KeyAdapter
-import kotlinx.android.synthetic.main.dialog_marker_sheet.view.*
 
 class MarkerDialogFragment(
   private val keys: List<Document<Key>>,
   private val onItemSelected: (Document<Key>) -> Unit
 ) : BottomSheetDialogFragment() {
-
     override fun onCreateView(
       inflater: LayoutInflater,
       container: ViewGroup?,
       savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.dialog_marker_sheet, container, false)
+        val binding = DialogMarkerSheetBinding.inflate(inflater, container, false)
         val keyAdapter = KeyAdapter(onItemSelected)
-
         keyAdapter.addKeys(keys)
-        view.list_keys.apply {
+        binding.listKeys.apply {
             adapter = keyAdapter
             layoutManager = LinearLayoutManager(context)
             val dividerDecoration =
@@ -53,6 +51,6 @@ class MarkerDialogFragment(
                 )
             addItemDecoration(dividerDecoration)
         }
-        return view
+        return binding.root
     }
 }

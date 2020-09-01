@@ -22,7 +22,6 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.CameraUpdate
@@ -31,14 +30,15 @@ import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
 import dagger.hilt.android.AndroidEntryPoint
 import dev.namhyun.geokey.R
+import dev.namhyun.geokey.databinding.ActivityEditLocationBinding
 import dev.namhyun.geokey.model.LocationModel
 import dev.namhyun.geokey.ui.addkey.AddKeyActivity
-import kotlinx.android.synthetic.main.activity_detail.*
-import kotlinx.android.synthetic.main.activity_main.*
 
 @AndroidEntryPoint
 class EditLocationActivity : AppCompatActivity(R.layout.activity_edit_location),
     OnMapReadyCallback {
+    private lateinit var binding: ActivityEditLocationBinding
+
     private val viewModel by viewModels<EditLocationViewModel>()
 
     private lateinit var naverMap: NaverMap
@@ -47,12 +47,14 @@ class EditLocationActivity : AppCompatActivity(R.layout.activity_edit_location),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setSupportActionBar(toolbar)
+        binding = ActivityEditLocationBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
         }
 
-        viewModel.location.observe(this, Observer {
+        viewModel.location.observe(this, {
             updateLocation(it)
         })
     }
@@ -97,13 +99,13 @@ class EditLocationActivity : AppCompatActivity(R.layout.activity_edit_location),
             viewModel.updateLocation(latLng.latitude, latLng.longitude)
         }
 
-        tv_current_location.text = locationModel?.address!!
+        binding.tvCurrentLocation.text = locationModel?.address!!
         updateMap(LatLng(locationModel?.lat!!, locationModel?.lon!!))
     }
 
     private fun updateLocation(locationModel: LocationModel) {
         this.locationModel = locationModel
-        tv_current_location.text = locationModel.address
+        binding.tvCurrentLocation.text = locationModel.address
         naverMap.locationOverlay.position = LatLng(locationModel.lat, locationModel.lon)
     }
 
