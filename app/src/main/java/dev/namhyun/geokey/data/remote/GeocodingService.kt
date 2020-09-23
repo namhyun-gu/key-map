@@ -15,7 +15,7 @@
  */
 package dev.namhyun.geokey.data.remote
 
-import dev.namhyun.geokey.model.GeocodingResponse
+import dev.namhyun.geokey.model.Geocoding
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Query
@@ -29,5 +29,5 @@ interface GeocodingService {
         @Query("coords") coords: String,
         @Query("orders") orders: String = "roadaddr,legalcode,admcode",
         @Query("output") output: String = "json"
-    ): GeocodingResponse
+    ): Geocoding
 }

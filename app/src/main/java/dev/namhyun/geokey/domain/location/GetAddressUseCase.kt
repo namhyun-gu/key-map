@@ -19,21 +19,21 @@ import dev.namhyun.geokey.BuildConfig
 import dev.namhyun.geokey.data.remote.GeocodingService
 import dev.namhyun.geokey.di.IoDispatcher
 import dev.namhyun.geokey.domain.UseCase
+import dev.namhyun.geokey.model.Geocoding
 import dev.namhyun.geokey.model.LocationModel
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
+import javax.inject.Inject
 
 class GetAddressUseCase @Inject constructor(
     private val geocodingService: GeocodingService,
     @IoDispatcher ioDispatcher: CoroutineDispatcher
-) : UseCase<LocationModel, String>(ioDispatcher) {
-    override suspend fun execute(parameters: LocationModel): String {
+) : UseCase<LocationModel, Geocoding>(ioDispatcher) {
+    override suspend fun execute(parameters: LocationModel): Geocoding {
         val coords = "${parameters.lon},${parameters.lat}"
-        val address = geocodingService.reverseGeocode(
+        return geocodingService.reverseGeocode(
             BuildConfig.NCP_CLIENT_ID,
             BuildConfig.NCP_CLIENT_SECRET,
             coords
-        ).getAddress()
-        return address ?: ""
+        )
     }
 }

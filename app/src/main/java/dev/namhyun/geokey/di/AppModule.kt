@@ -18,9 +18,7 @@ package dev.namhyun.geokey.di
 import android.content.Context
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,15 +29,12 @@ import dev.namhyun.geokey.data.local.LocationDataSourceImpl
 import dev.namhyun.geokey.data.remote.FirestoreKeyDataSource
 import dev.namhyun.geokey.data.remote.GeocodingService
 import dev.namhyun.geokey.data.remote.KeyDataSource
-import dev.namhyun.geokey.model.AdmCodeResult
-import dev.namhyun.geokey.model.GeocodingResult
-import dev.namhyun.geokey.model.LegalCodeResult
-import dev.namhyun.geokey.model.OperationName
-import dev.namhyun.geokey.model.RoadAddrResult
 import dev.namhyun.geokey.repository.KeyRepository
 import javax.inject.Singleton
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 
 @InstallIn(ApplicationComponent::class)
 @Module
@@ -63,23 +58,20 @@ class AppModule {
         return LocationDataSourceImpl(context)
     }
 
+    @ExperimentalSerializationApi
     @Singleton
     @Provides
     fun provideGeocodingService(): GeocodingService {
-        val moshi = Moshi.Builder()
-            .add(
-                PolymorphicJsonAdapterFactory.of(GeocodingResult::class.java, "name")
-                    .withSubtype(LegalCodeResult::class.java, OperationName.legalcode.name)
-                    .withSubtype(AdmCodeResult::class.java, OperationName.admcode.name)
-                    .withSubtype(RoadAddrResult::class.java, OperationName.roadaddr.name)
-            )
-            .add(KotlinJsonAdapterFactory())
+        val contentType = "application/json".toMediaType()
+        val json = Json {
+            ignoreUnknownKeys = true
+            classDiscriminator = "name"
+        }
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://naveropenapi.apigw.ntruss.com")
+            .addConverterFactory(json.asConverterFactory(contentType))
             .build()
 
-        return Retrofit.Builder()
-            .baseUrl("https://naveropenapi.apigw.ntruss.com")
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .build()
-            .create(GeocodingService::class.java)
+        return retrofit.create(GeocodingService::class.java)
     }
 }
