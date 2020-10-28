@@ -7,9 +7,9 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$library.kotlin"
         classpath "org.jetbrains.kotlin:kotlin-serialization:$library.kotlin"
-        classpath "com.android.tools.build:gradle:4.0.1"
+        classpath 'com.android.tools.build:gradle:4.1.0'
         classpath "com.google.dagger:hilt-android-gradle-plugin:$library.hilt_android"
-        classpath "com.google.gms:google-services:4.3.3"
+        classpath "com.google.gms:google-services:4.3.4"
         classpath "com.google.firebase:firebase-crashlytics-gradle:2.3.0"
     }
 }
