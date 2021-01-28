@@ -1,36 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-~ Copyright (C) 2019 The Android Open Source Project
-~
-~ Licensed under the Apache License, Version 2.0 (the "License");
-~ you may not use this file except in compliance with the License.
-~ You may obtain a copy of the License at
-~
-~      http://www.apache.org/licenses/LICENSE-2.0
-~
-~ Unless required by applicable law or agreed to in writing, software
-~ distributed under the License is distributed on an "AS IS" BASIS,
-~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-~ See the License for the specific language governing permissions and
-~ limitations under the License.
--->
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!--Top level DayNight theme to be used in AndroidManifest.xml-->
-    <style name="Theme.MyApp" parent="Base.Theme.MyApp">
-        <!--Material color attributes (dark theme) -->
-        <item name="colorPrimary">@color/purple_200</item>
-        <item name="colorPrimaryVariant">@color/purple_600</item>
-        <item name="colorSecondary">@color/green_200</item>
-        <item name="colorSecondaryVariant">@color/green_500</item>
-        <item name="android:colorBackground">@color/black_900</item>
-        <item name="colorSurface">@color/black_800</item>
-        <item name="colorError">@color/red_200</item>
-        <item name="colorOnPrimary">@color/black_900</item>
-        <item name="colorOnSecondary">@color/black_900</item>
-        <item name="colorOnBackground">@color/white_50</item>
-        <item name="colorOnSurface">@color/white_50</item>
-        <item name="colorOnError">@color/black_900</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
-        <item name="android:windowLightNavigationBar" tools:ignore="NewApi">false</item>
+<resources>
+    <style name="Theme.KeyMap.DayNight" parent="Theme.KeyMap.Dark" />
+
+    <style name="Theme.KeyMap.Dark" parent="Theme.MaterialComponents.NoActionBar">
+        <!-- Color -->
+        <item name="colorPrimary">@color/keymap_blue_200</item>
+        <item name="colorPrimaryVariant">@color/keymap_blue_300</item>
+        <item name="colorSecondary">@color/keymap_orange_300</item>
+        <item name="colorSecondaryVariant">@color/keymap_orange_300</item>
+
+        <item name="android:colorBackground">@color/keymap_black_900</item>
+        <item name="colorSurface">@color/keymap_black_800</item>
+        <item name="colorError">@color/keymap_red_200</item>
+
+        <item name="colorOnPrimary">@color/keymap_black_900</item>
+        <item name="colorOnSecondary">@color/keymap_black_900</item>
+        <item name="colorOnBackground">@color/keymap_white_50</item>
+        <item name="colorOnSurface">@color/keymap_white_50</item>
+        <item name="colorOnError">@color/keymap_black_900</item>
+
+        <item name="scrimBackground">@color/keymap_black_900_alpha_087</item>
+        <item name="android:statusBarColor">@color/keymap_black_900_alpha_060</item>
+
+        <item name="elevationOverlayEnabled">true</item>
+        <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.Surface</item>
+
+        <!-- System attributes -->
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 </resources>

@@ -1,0 +1,11 @@
+#!/bin/sh
+echo "Run lint"
+
+./gradlew ktlint detekt
+
+status=$?
+
+if ["$status" -ne 0]; then
+    echo "Failed lint"
+    exit 1
+fi

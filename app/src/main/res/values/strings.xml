@@ -1,23 +1,13 @@
 <resources>
-    <string name="app_name" translatable="false">GeoKey</string>
-    <string name="action_settings" translatable="false">Settings</string>
+    <string name="app_name" translatable="false">KeyMap</string>
     <string name="title_add_key">Add Key</string>
     <string name="title_edit_key">Edit Key</string>
-    <string name="title_edit_location">Edit Location</string>
-    <string name="hint_name">Name</string>
-    <string name="hint_key">Key</string>
-    <string name="msg_fetch_keys_error">Can\'t fetch keys</string>
-    <string name="msg_name_required">Name field required</string>
-    <string name="msg_key_required">Key field required</string>
-    <string name="msg_key_saved">Key saved</string>
-    <string name="msg_key_not_saved">Key not saved</string>
-    <string name="dialog_delete_title">Delete key \'%1$s\'</string>
-    <string name="msg_not_connected">Not connected internet</string>
-    <string name="msg_login_failed">Failed to login</string>
-    <string name="action_add">Add</string>
-    <string name="action_cancel">Cancel</string>
-    <string name="hint_location">Location</string>
-    <string name="action_edit">Edit</string>
-    <string name="action_delete">Delete</string>
-    <string name="action_done">Done</string>
+    <string name="title_pick_location">Pick Location</string>
+    <string name="hint_content">Content</string>
+    <string name="hint_description">Description</string>
+    <string name="hint_address">Address</string>
+    <string name="hint_detail">Detail</string>
+    <string name="msg_content_empty">Content is empty</string>
+    <string name="msg_key_saved">Key is saved</string>
+    <string name="msg_failed_sign_in">Failed to sign in</string>
 </resources>

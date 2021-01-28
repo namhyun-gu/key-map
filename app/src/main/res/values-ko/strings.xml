@@ -2,21 +2,12 @@
 <resources>
     <string name="title_add_key">키 추가</string>
     <string name="title_edit_key">키 편집</string>
-    <string name="title_edit_location">위치 편집</string>
-    <string name="hint_name">이름</string>
-    <string name="hint_key">키</string>
-    <string name="hint_location">위치</string>
-    <string name="msg_fetch_keys_error">키를 가져올 수 없음</string>
-    <string name="msg_name_required">이름 필드값 필요</string>
-    <string name="msg_key_required">키 필드값 필요</string>
+    <string name="title_pick_location">위치 선택</string>
+    <string name="hint_content">내용</string>
+    <string name="hint_description">설명</string>
+    <string name="hint_address">주소</string>
+    <string name="hint_detail">상세 주소</string>
+    <string name="msg_content_empty">내용이 비어있습니다</string>
     <string name="msg_key_saved">키 저장됨</string>
-    <string name="msg_key_not_saved">키 저장에 실패</string>
-    <string name="dialog_delete_title">\'%1$s\' 키 삭제</string>
-    <string name="msg_not_connected">인터넷에 연결되지 않았습니다</string>
-    <string name="msg_login_failed">로그인에 실패하였습니다</string>
-    <string name="action_add">추가</string>
-    <string name="action_cancel">취소</string>
-    <string name="action_edit">수정</string>
-    <string name="action_delete">삭제</string>
-    <string name="action_done">완료</string>
+    <string name="msg_failed_sign_in">로그인 실패</string>
 </resources>
