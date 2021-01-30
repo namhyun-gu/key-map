@@ -6,20 +6,17 @@ import io.github.namhyungu.keymap.data.Address
 import io.github.namhyungu.keymap.data.BaseAddress
 import io.github.namhyungu.keymap.data.RoadAddress
 import io.github.namhyungu.keymap.data.source.ReverseGeocodingService
-import io.github.namhyungu.keymap.util.HttpException
 import io.github.namhyungu.keymap.util.`object`
 import io.github.namhyungu.keymap.util.array
-import io.github.namhyungu.keymap.util.await
 import io.github.namhyungu.keymap.util.checkInMainCoroutineDispatcher
+import io.github.namhyungu.keymap.util.startRequest
 import io.github.namhyungu.keymap.util.string
 import io.github.namhyungu.keymap.util.toJsonObject
-import okhttp3.HttpUrl.Companion.toHttpUrl
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import org.chromium.net.CronetEngine
 import org.json.JSONObject
 
 class ReverseGeocodingServiceImpl(
-    private val client: OkHttpClient,
+    private val cronetEngine: CronetEngine,
 ) : ReverseGeocodingService {
     override suspend fun reverseGeocoding(lat: Double, lon: Double): BaseAddress {
         val url = "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc"
@@ -31,28 +28,16 @@ class ReverseGeocodingServiceImpl(
             .addQueryParameter("output", "json")
             .build()
 
-        val request = Request.Builder()
-            .url(url)
-            .get()
-            .header("X-NCP-APIGW-API-KEY-ID", BuildConfig.NCP_CLIENT_ID)
-            .header("X-NCP-APIGW-API-KEY", BuildConfig.NCP_CLIENT_SECRET)
-            .build()
-
-
         val response = if (checkInMainCoroutineDispatcher()) {
             throw NetworkOnMainThreadException()
         } else {
-            client.newCall(request).await()
+            cronetEngine.startRequest(url.toString()) {
+                it.setHttpMethod("GET")
+                    .addHeader("X-NCP-APIGW-API-KEY-ID", BuildConfig.NCP_CLIENT_ID)
+                    .addHeader("X-NCP-APIGW-API-KEY", BuildConfig.NCP_CLIENT_SECRET)
+            }
         }
-
-        if (!response.isSuccessful) {
-            response.body?.close()
-            throw HttpException(response)
-        }
-
-        val body = checkNotNull(response.body) { "Null response body" }
-
-        return toObject(body.string())
+        return toObject(response)
     }
 
     private fun toObject(body: String): BaseAddress {

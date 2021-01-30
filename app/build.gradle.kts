@@ -79,10 +79,9 @@ dependencies {
 
     implementation("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha01")
     kapt("androidx.hilt:hilt-compiler:1.0.0-alpha01")
-    // Network
-    implementation("com.squareup.okhttp3:okhttp:4.9.0")
-
+    
     // Google Services
+    implementation("com.google.android.gms:play-services-cronet:17.0.0")
     implementation("com.google.android.gms:play-services-location:17.1.0")
     implementation("com.google.android.gms:play-services-auth:19.0.0")
 
