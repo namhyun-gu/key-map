@@ -9,5 +9,8 @@
     <string name="hint_detail">상세 주소</string>
     <string name="msg_content_empty">내용이 비어있습니다</string>
     <string name="msg_key_saved">키 저장됨</string>
+    <string name="msg_key_deleted">키 삭제됨</string>
     <string name="msg_failed_sign_in">로그인 실패</string>
+    <string name="action_delete">삭제</string>
+    <string name="action_save">저장</string>
 </resources>

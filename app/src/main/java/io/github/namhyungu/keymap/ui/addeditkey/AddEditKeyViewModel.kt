@@ -28,6 +28,9 @@ class AddEditKeyViewModel @ViewModelInject constructor(
     private val _keySavedEvent = MutableLiveData<Event<Unit>>()
     val keySavedEvent: LiveData<Event<Unit>> = _keySavedEvent
 
+    private val _keyDeletedEvent = MutableLiveData<Event<Unit>>()
+    val keyDeletedEvent: LiveData<Event<Unit>> = _keyDeletedEvent
+
     private val _contentIsEmptyEvent = MutableLiveData<Event<Unit>>()
     val contentIsEmptyEvent: LiveData<Event<Unit>> = _contentIsEmptyEvent
 
@@ -130,10 +133,18 @@ class AddEditKeyViewModel @ViewModelInject constructor(
         }
     }
 
+    fun deleteKey(keyId: String) {
+        viewModelScope.launch {
+            keyDataSource.deleteKey(keyId)
+            _keyDeletedEvent.value = Event(Unit)
+        }
+    }
+
     fun startPickLocation() {
         val uiState = _uiState.value!!
         if (uiState.location != null) {
             _startPickLocationEvent.value = Event(uiState.location)
         }
     }
+
 }

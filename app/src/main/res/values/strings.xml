@@ -9,5 +9,8 @@
     <string name="hint_detail">Detail</string>
     <string name="msg_content_empty">Content is empty</string>
     <string name="msg_key_saved">Key is saved</string>
+    <string name="msg_key_deleted">Key is deleted</string>
     <string name="msg_failed_sign_in">Failed to sign in</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_save">Save</string>
 </resources>

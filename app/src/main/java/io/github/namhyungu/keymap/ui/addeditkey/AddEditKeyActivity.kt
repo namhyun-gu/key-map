@@ -4,6 +4,8 @@ import android.app.Activity
 import android.location.Location
 import android.os.Bundle
 import android.view.Gravity
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -93,10 +95,6 @@ class AddEditKeyActivity : AppCompatActivity() {
         binding.editDetail.doOnTextChanged { text, _, _, _ ->
             viewModel.updateDetail(text.toString())
         }
-
-        binding.fab.setOnClickListener {
-            viewModel.saveKey()
-        }
     }
 
     override fun onStart() {
@@ -159,6 +157,11 @@ class AddEditKeyActivity : AppCompatActivity() {
             finish()
         })
 
+        viewModel.keyDeletedEvent.observe(this, EventObserver {
+            Toast.makeText(this, getString(R.string.msg_key_deleted), Toast.LENGTH_SHORT).show()
+            finish()
+        })
+
         viewModel.contentIsEmptyEvent.observe(this, EventObserver {
             Snackbar.make(
                 binding.root,
@@ -175,5 +178,25 @@ class AddEditKeyActivity : AppCompatActivity() {
         })
 
         viewModel.start(keyId, location)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_addedit_key, menu)
+        if (keyId == null) {
+            menu?.findItem(R.id.action_delete)?.isVisible = false
+        }
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_save -> {
+                viewModel.saveKey()
+            }
+            R.id.action_delete -> {
+                viewModel.deleteKey(keyId!!)
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

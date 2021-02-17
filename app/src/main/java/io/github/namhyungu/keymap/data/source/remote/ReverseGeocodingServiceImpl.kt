@@ -1,5 +1,6 @@
 package io.github.namhyungu.keymap.data.source.remote
 
+import android.net.Uri
 import android.os.NetworkOnMainThreadException
 import io.github.namhyungu.keymap.BuildConfig
 import io.github.namhyungu.keymap.data.Address
@@ -19,13 +20,12 @@ class ReverseGeocodingServiceImpl(
     private val cronetEngine: CronetEngine,
 ) : ReverseGeocodingService {
     override suspend fun reverseGeocoding(lat: Double, lon: Double): BaseAddress {
-        val url = "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc"
-            .toHttpUrl()
-            .newBuilder()
-            .addQueryParameter("sourcecrs", "epsg:4326")
-            .addQueryParameter("coords", "${lon},${lat}")
-            .addQueryParameter("orders", "roadaddr,addr")
-            .addQueryParameter("output", "json")
+        val url = Uri.parse("https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc")
+            .buildUpon()
+            .appendQueryParameter("sourcecrs", "epsg:4326")
+            .appendQueryParameter("coords", "${lon},${lat}")
+            .appendQueryParameter("orders", "roadaddr,addr")
+            .appendQueryParameter("output", "json")
             .build()
 
         val response = if (checkInMainCoroutineDispatcher()) {
