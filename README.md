@@ -29,6 +29,7 @@ MVVM (View - ViewModel - Model)
   - ViewModel & LiveData
   - App Startup
 - [Dagger Hilt](https://dagger.dev/hilt/) for dependency injection.
+- [Cronet](https://developer.android.com/guide/topics/connectivity/cronet?hl=ko) for networking
 - [Firebase](https://firebase.google.com/)
 - [Naver Map](https://navermaps.github.io/android-map-sdk/guide-ko/1.html)
 - [Bundler](https://github.com/skydoves/bundler) - Android Intent & Bundle extensions that insert and retrieve values elegantly.
