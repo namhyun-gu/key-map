@@ -1,21 +1,21 @@
 buildscript {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.21")
-        classpath("com.android.tools.build:gradle:4.1.2")
-        classpath("com.google.dagger:hilt-android-gradle-plugin:2.29.1-alpha")
-        classpath("com.google.gms:google-services:4.3.4")
-        classpath("com.google.firebase:firebase-crashlytics-gradle:2.4.1")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.0")
+        classpath("com.android.tools.build:gradle:7.4.2")
+        classpath("com.google.dagger:hilt-android-gradle-plugin:2.43.2")
+        classpath("com.google.gms:google-services:4.3.15")
+        classpath("com.google.firebase:firebase-crashlytics-gradle:2.9.4")
     }
 }
 
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
         maven(url = "https://naver.jfrog.io/artifactory/maven/")
     }
 }

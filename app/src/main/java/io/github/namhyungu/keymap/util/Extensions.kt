@@ -53,7 +53,7 @@ fun Query.asFlow(): Flow<QuerySnapshot?> {
             if (e != null) {
                 close(e)
             } else {
-                offer(snapshot)
+                trySend(snapshot)
             }
         }
         awaitClose {
@@ -69,7 +69,7 @@ fun DocumentReference.asFlow(): Flow<DocumentSnapshot?> {
             if (e != null) {
                 close(e)
             } else {
-                offer(snapshot)
+                trySend(snapshot)
             }
         }
         awaitClose {

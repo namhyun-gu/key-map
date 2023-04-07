@@ -7,8 +7,8 @@ import com.google.firebase.ktx.Firebase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import io.github.namhyungu.keymap.data.source.KeyDataSource
 import io.github.namhyungu.keymap.data.source.ReverseGeocodingService
 import io.github.namhyungu.keymap.data.source.UserDataSource
@@ -19,7 +19,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.chromium.net.CronetEngine
 import javax.inject.Singleton
 
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
 class DataModule {
     @Singleton
