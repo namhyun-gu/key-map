@@ -15,7 +15,7 @@ sealed class KeyItem {
 
     data class Default(
         override val location: Location,
-        val key: Key,
+        val value: Key,
     ) : KeyItem()
 
     data class Group(
@@ -68,7 +68,7 @@ class KeyController(
                     }
                 }
                 is KeyItem.Default -> {
-                    val key = item.key
+                    val key = item.value
                     val place = key.place!!
                     val address = Util.getAddressString(place.address)
                     val buildingName = Util.getBuildingName(place.address)

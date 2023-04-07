@@ -1,18 +1,20 @@
 package io.github.namhyungu.keymap.ui.picklocation
 
 import android.location.Location
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.namhyungu.keymap.data.source.ReverseGeocodingService
 import io.github.namhyungu.keymap.util.Event
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class PickLocationViewModel @ViewModelInject constructor(
+@HiltViewModel
+class PickLocationViewModel @Inject constructor(
     private val reverseGeocodingService: ReverseGeocodingService,
 ) : ViewModel() {
     private val _uiState = MutableLiveData(PickLocationUiState())

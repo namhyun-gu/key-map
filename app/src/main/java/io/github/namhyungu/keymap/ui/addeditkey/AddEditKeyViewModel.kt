@@ -1,12 +1,12 @@
 package io.github.namhyungu.keymap.ui.addeditkey
 
 import android.location.Location
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.GeoPoint
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.namhyungu.keymap.data.Key
 import io.github.namhyungu.keymap.data.Place
 import io.github.namhyungu.keymap.data.source.KeyDataSource
@@ -17,8 +17,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import javax.inject.Inject
 
-class AddEditKeyViewModel @ViewModelInject constructor(
+@HiltViewModel
+class AddEditKeyViewModel @Inject constructor(
     private val keyDataSource: KeyDataSource,
     private val reverseGeocodingService: ReverseGeocodingService,
 ) : ViewModel() {

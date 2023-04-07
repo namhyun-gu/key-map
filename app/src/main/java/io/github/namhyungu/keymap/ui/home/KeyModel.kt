@@ -62,19 +62,19 @@ abstract class KeyModel : EpoxyModelWithHolder<KeyModel.KeyHolder>() {
                 alpha(0.24f)
             })
             .append(address, textViewStyle {
-                textColor(context.getColorFromAttr(R.attr.colorOnBackground))
+//                textColor(context.getColorFromAttr(R.attr.colorOnBackground))
             })
 
         if (addressDetail.isNotEmpty()) {
             builder.append(", $addressDetail", textViewStyle {
-                textColor(context.getColorFromAttr(R.attr.colorOnBackground))
+//                textColor(context.getColorFromAttr(R.attr.colorOnBackground))
                 textStyle(Typeface.BOLD)
             })
         }
 
         if (buildingName.isNotEmpty()) {
             builder.append(" ($buildingName)", textViewStyle {
-                textColor(context.getColorFromAttr(R.attr.colorOnBackground))
+//                textColor(context.getColorFromAttr(R.attr.colorOnBackground))
             })
         }
 

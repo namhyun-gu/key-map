@@ -9,6 +9,8 @@ sealed class BaseAddress {
 
     abstract fun toMap(): Map<String, Any>
 
+    fun toAddressString(): String = "$city $address1"
+
     companion object {
         const val TYPE_ADDRESS = 1
         const val TYPE_ROAD_ADDRESS = 2

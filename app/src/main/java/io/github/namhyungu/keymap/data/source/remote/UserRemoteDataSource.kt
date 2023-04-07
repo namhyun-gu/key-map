@@ -9,17 +9,14 @@ import io.github.namhyungu.keymap.util.await
 class UserRemoteDataSource(
     private val auth: FirebaseAuth,
 ) : UserDataSource {
-    override suspend fun signIn(token: String): Boolean {
+    override suspend fun signIn(token: String): String? {
         val credential = GoogleAuthProvider.getCredential(token, null)
         val result = auth.signInWithCredential(credential).await()
-        return result != null
+        return result?.user?.uid
     }
 
     override fun getCurrentUser(): User? {
-        return if (auth.currentUser != null) {
-            User(auth.uid!!)
-        } else {
-            null
-        }
+        val uid = auth.currentUser?.uid ?: return null
+        return User(uid)
     }
 }

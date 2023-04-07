@@ -16,17 +16,17 @@
 package io.github.namhyungu.keymap.domain
 
 import io.github.namhyungu.keymap.data.Result
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
 
-@ExperimentalCoroutinesApi
-abstract class FlowUseCase<in P, R>(private val coroutineDispatcher: CoroutineDispatcher) {
-    operator fun invoke(parameters: P): Flow<Result<R>> = execute(parameters)
-        .catch { e -> emit(Result.Error(Exception(e))) }
-        .flowOn(coroutineDispatcher)
+abstract class FlowUseCase<in P, R> {
+    operator fun invoke(parameters: P) = flow {
+        emitAll(execute(parameters))
+    }.catch { e ->
+        emit(Result.Error(Exception(e)))
+    }
 
     protected abstract fun execute(parameters: P): Flow<Result<R>>
 }

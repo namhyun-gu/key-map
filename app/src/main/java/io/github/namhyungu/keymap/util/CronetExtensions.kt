@@ -1,6 +1,5 @@
 package io.github.namhyungu.keymap.util
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.chromium.net.CronetEngine
 import org.chromium.net.CronetException
 import org.chromium.net.UrlRequest
@@ -12,7 +11,6 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-@OptIn(ExperimentalCoroutinesApi::class)
 suspend fun CronetEngine.startRequest(
     url: String,
     builder: (UrlRequest.Builder) -> UrlRequest.Builder,

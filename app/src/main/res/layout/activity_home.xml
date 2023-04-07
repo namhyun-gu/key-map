@@ -1,88 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/map"
-        android:name="com.naver.maps.map.MapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="428dp" />
+    <!--    <androidx.fragment.app.FragmentContainerView-->
+    <!--        android:id="@+id/map"-->
+    <!--        android:name="com.naver.maps.map.MapFragment"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent"-->
+    <!--        android:paddingBottom="428dp" />-->
 
-    <LinearLayout
-        android:id="@+id/bottom_sheet"
-        style="?attr/bottomSheetStyle"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?attr/colorSurface"
-        android:orientation="vertical"
-        app:behavior_peekHeight="428dp"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+    <!--    <LinearLayout-->
+    <!--        android:id="@+id/bottom_sheet"-->
+    <!--        style="?attr/bottomSheetStyle"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent"-->
+    <!--        android:background="?attr/colorSurface"-->
+    <!--        android:orientation="vertical"-->
+    <!--        app:behavior_peekHeight="428dp"-->
+    <!--        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">-->
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:alpha="0.36"
-            android:padding="8dp"
-            android:src="@drawable/bottom_sheet_pill" />
+    <!--        <ImageView-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_gravity="center"-->
+    <!--            android:alpha="0.36"-->
+    <!--            android:padding="8dp"-->
+    <!--            android:src="@drawable/bottom_sheet_pill" />-->
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:paddingHorizontal="16dp">
+    <!--        <FrameLayout-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="56dp"-->
+    <!--            android:paddingHorizontal="16dp">-->
 
-            <TextView
-                android:id="@+id/address"
-                style="@style/TextAppearance.MaterialComponents.Headline6"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:textStyle="bold"
-                tools:text="Address" />
+    <!--            <TextView-->
+    <!--                android:id="@+id/address"-->
+    <!--                style="@style/TextAppearance.MaterialComponents.Headline6"-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:layout_gravity="center_vertical"-->
+    <!--                android:textStyle="bold"-->
+    <!--                tools:text="Address" />-->
 
-            <com.facebook.shimmer.ShimmerFrameLayout
-                android:id="@+id/address_shimmer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                tools:visibility="gone">
+    <!--            <com.facebook.shimmer.ShimmerFrameLayout-->
+    <!--                android:id="@+id/address_shimmer"-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:layout_gravity="center_vertical"-->
+    <!--                tools:visibility="gone">-->
 
-                <TextView
-                    style="@style/TextAppearance.MaterialComponents.Headline6"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+    <!--                <TextView-->
+    <!--                    style="@style/TextAppearance.MaterialComponents.Headline6"-->
+    <!--                    android:layout_width="match_parent"-->
+    <!--                    android:layout_height="wrap_content" />-->
 
-            </com.facebook.shimmer.ShimmerFrameLayout>
+    <!--            </com.facebook.shimmer.ShimmerFrameLayout>-->
 
-        </FrameLayout>
+    <!--        </FrameLayout>-->
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:alpha="0.12"
-            android:background="?attr/colorOnBackground" />
+    <!--        <View-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="1dp"-->
+    <!--            android:alpha="0.12"-->
+    <!--            android:background="?attr/colorOnBackground" />-->
 
-        <com.airbnb.epoxy.EpoxyRecyclerView
-            android:id="@+id/key_list"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/item_key" />
+    <!--        <com.airbnb.epoxy.EpoxyRecyclerView-->
+    <!--            android:id="@+id/key_list"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="0dp"-->
+    <!--            android:layout_weight="1"-->
+    <!--            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
+    <!--            tools:listitem="@layout/item_key" />-->
 
-    </LinearLayout>
+    <!--    </LinearLayout>-->
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:src="@drawable/ic_round_add_24"
-        app:layout_anchor="@id/bottom_sheet"
-        app:layout_anchorGravity="end" />
+    <!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+    <!--        android:id="@+id/fab"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_margin="16dp"-->
+    <!--        android:src="@drawable/ic_round_add_24"-->
+    <!--        app:layout_anchor="@id/bottom_sheet"-->
+    <!--        app:layout_anchorGravity="end" />-->
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

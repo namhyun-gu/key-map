@@ -1,40 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.KeyMap.DayNight" parent="Theme.KeyMap" />
+    <style name="Theme.KeyMap" parent="android:Theme.Material.Light.NoActionBar" />
 
-    <style name="Theme.KeyMap" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Color -->
-        <item name="colorPrimary">@color/keymap_blue_700</item>
-        <item name="colorPrimaryVariant">@color/keymap_blue_800</item>
-        <item name="colorSecondary">@color/keymap_orange_500</item>
-        <item name="colorSecondaryVariant">@color/keymap_orange_400</item>
-
-        <item name="android:colorBackground">@color/keymap_blue_50</item>
-        <item name="colorSurface">@color/keymap_white_50</item>
-        <item name="colorError">@color/keymap_red_400</item>
-
-        <item name="colorOnPrimary">@color/keymap_white_50</item>
-        <item name="colorOnSecondary">@color/keymap_black_900</item>
-        <item name="colorOnBackground">@color/keymap_black_900</item>
-        <item name="colorOnSurface">@color/keymap_black_900</item>
-        <item name="colorOnError">@color/keymap_black_900</item>
-
-        <item name="scrimBackground">@color/keymap_white_50_alpha_060</item>
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-
-        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.KeyMap.SmallComponent</item>
-        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.KeyMap.MediumComponent</item>
-        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.KeyMap.LargeComponent</item>
-
-        <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.Surface</item>
-
-        <!-- System attributes -->
-        <item name="android:windowBackground">?android:colorBackground</item>
-        <item name="android:windowLightStatusBar">false</item>
-    </style>
-
-    <style name="Theme.KeyMap.Splash" parent="Theme.KeyMap.DayNight">
-        <item name="android:windowBackground">@drawable/background_splash</item>
-    </style>
 </resources>

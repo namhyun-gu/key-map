@@ -15,8 +15,6 @@
  */
 package io.github.namhyungu.keymap.data
 
-import androidx.lifecycle.MutableLiveData
-
 sealed class Result<out R> {
 
     data class Success<out T>(val data: T) : Result<T>()
@@ -42,8 +40,16 @@ fun <T> Result<T>.successOr(fallback: T): T {
 val <T> Result<T>.data: T?
     get() = (this as? Result.Success)?.data
 
-inline fun <reified T> Result<T>.updateOnSuccess(liveData: MutableLiveData<T>) {
-    if (this is Result.Success) {
-        liveData.value = data
+inline fun <reified T> Result<T>.throwFail() {
+    if (this is Result.Error) {
+        throw this.exception
     }
+}
+
+inline fun <reified T> Result<T>.getOrThrow(): T? {
+    if (this is Result.Error) {
+        throw this.exception
+    }
+
+    return this.data
 }

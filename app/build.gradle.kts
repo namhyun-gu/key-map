@@ -10,12 +10,10 @@ plugins {
 android {
     namespace = "io.github.namhyungu.keymap"
     compileSdk = 33
-    compileSdkPreview = "UpsideDownCake"
     defaultConfig {
         applicationId = "io.github.namhyungu.keymap"
         minSdk = 23
         targetSdk = 33
-        targetSdkPreview = "UpsideDownCake"
         versionCode = buildVersionCode()
         versionName = buildVersionName()
         vectorDrawables.useSupportLibrary = true
@@ -54,7 +52,16 @@ android {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
     buildFeatures {
+        compose = true
         viewBinding = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.4"
+    }
+    packagingOptions {
+        resources {
+            excludes.add("META-INF/versions/9/previous-compilation-data.bin")
+        }
     }
 }
 
@@ -66,11 +73,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.0-Beta")
 
     // AndroidX
+    implementation("androidx.core:core-splashscreen:1.0.0")
     implementation("androidx.core:core-ktx:1.10.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.activity:activity-ktx:1.8.0-alpha02")
     implementation("androidx.fragment:fragment-ktx:1.6.0-alpha09")
-    implementation("com.google.android.material:material:1.8.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
@@ -81,13 +87,11 @@ dependencies {
     // Dagger Hilt
     implementation("com.google.dagger:hilt-android:2.43.2")
     kapt("com.google.dagger:hilt-android-compiler:2.43.2")
-
-    implementation("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
     kapt("androidx.hilt:hilt-compiler:1.0.0")
 
     // Google Services
     implementation("com.google.android.gms:play-services-cronet:18.0.1")
-    implementation("com.google.android.gms:play-services-location:21.0.1")
+    // implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation("com.google.android.gms:play-services-auth:20.5.0")
 
     // Firebase
@@ -100,6 +104,27 @@ dependencies {
     implementation("com.google.firebase:firebase-storage-ktx")
 
     implementation("com.firebase:geofire-android-common:3.1.0")
+
+    implementation("io.github.fornewid:naver-map-compose:1.3.3")
+
+    // Accompanist
+    implementation("com.google.accompanist:accompanist-permissions:0.31.0-alpha")
+
+    // Compose
+    implementation(platform("androidx.compose:compose-bom:2023.04.00"))
+    implementation("androidx.compose.foundation:foundation")
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+
+    debugImplementation("androidx.compose.ui:ui-tooling")
+
+    implementation("androidx.compose.material3:material3:1.1.0-beta02")
+    implementation("androidx.compose.material:material-icons-core")
+    implementation("androidx.compose.material3:material3-window-size-class")
+
+    implementation("androidx.activity:activity-compose:1.7.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
 
     // Naver Map
     implementation("com.naver.maps:map-sdk:3.16.2")

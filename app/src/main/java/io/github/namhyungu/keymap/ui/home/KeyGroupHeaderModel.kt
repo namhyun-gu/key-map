@@ -39,12 +39,12 @@ abstract class KeyGroupHeaderModel :
                 alpha(0.24f)
             })
             .append(address, textViewStyle {
-                textColor(context.getColorFromAttr(R.attr.colorOnBackground))
+//                textColor(context.getColorFromAttr(R.attr.colorOnBackground))
             })
 
         if (buildingName.isNotEmpty()) {
             builder.append(" ($buildingName)", textViewStyle {
-                textColor(context.getColorFromAttr(R.attr.colorOnBackground))
+//                textColor(context.getColorFromAttr(R.attr.colorOnBackground))
             })
         }
 
