@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -40,6 +41,10 @@ class HomeActivity : ComponentActivity() {
                 val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
                 val userState by userViewModel.user.collectAsStateWithLifecycle()
 
+                LaunchedEffect(Unit) {
+                    collectUserEvent()
+                }
+
                 HomeScreen(
                     homeUiState = uiState,
                     userState = userState,
@@ -51,6 +56,14 @@ class HomeActivity : ComponentActivity() {
                         requestSignIn.launch(googleSignInClient.signInIntent)
                     }
                 )
+            }
+        }
+    }
+
+    private suspend fun collectUserEvent() {
+        userViewModel.event.collect {
+            when (it) {
+                UserEvent.SignIn -> homeViewModel.refreshKey()
             }
         }
     }

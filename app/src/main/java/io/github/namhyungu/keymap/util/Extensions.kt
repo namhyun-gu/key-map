@@ -16,12 +16,9 @@
 package io.github.namhyungu.keymap.util
 
 import android.content.Context
-import android.content.pm.PackageManager
 import android.location.Location
 import android.util.TypedValue
-import androidx.activity.ComponentActivity
 import androidx.annotation.AttrRes
-import androidx.core.app.ActivityCompat
 import com.firebase.geofire.GeoFireUtils
 import com.firebase.geofire.GeoLocation
 import com.google.android.gms.tasks.Task
@@ -29,8 +26,6 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
-import com.naver.maps.map.MapFragment
-import com.naver.maps.map.NaverMap
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.CompletionHandler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -116,27 +111,10 @@ class ContinuationCallback(
     }
 }
 
-suspend fun MapFragment.awaitMap(): NaverMap {
-    return suspendCoroutine { cont ->
-        getMapAsync {
-            cont.resume(it)
-        }
-    }
-}
-
 fun Context.getColorFromAttr(@AttrRes attr: Int): Int {
     val typedValue = TypedValue()
     theme.resolveAttribute(attr, typedValue, true)
     return typedValue.data
-}
-
-fun ComponentActivity.checkSelfPermissions(permissions: List<String>): Boolean {
-    permissions.forEach {
-        if (ActivityCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED) {
-            return false
-        }
-    }
-    return true
 }
 
 fun Location.toGeohash(): String {

@@ -5,12 +5,13 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.namhyungu.keymap.data.User
 import io.github.namhyungu.keymap.data.data
-import io.github.namhyungu.keymap.data.getOrThrow
 import io.github.namhyungu.keymap.domain.signin.GetUserUseCase
 import io.github.namhyungu.keymap.domain.signin.SignInUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,12 +26,16 @@ sealed interface UserUiState {
 
 }
 
-sealed interface SignInEvent {
+sealed interface UserEvent {
+    object SignIn : UserEvent
+}
 
-    object Success : SignInEvent
-
-    object Fail : SignInEvent
-
+fun User?.toUiState(): UserUiState {
+    return if (this != null) {
+        UserUiState.SignIn(this)
+    } else {
+        UserUiState.NotSignIn
+    }
 }
 
 @HiltViewModel
@@ -43,9 +48,9 @@ class UserViewModel @Inject constructor(
     val user: StateFlow<UserUiState>
         get() = _user.asStateFlow()
 
-    private val _signInEvent: MutableSharedFlow<SignInEvent> = MutableSharedFlow()
-    val signInEvent: MutableSharedFlow<SignInEvent>
-        get() = _signInEvent
+    private val _event: MutableSharedFlow<UserEvent> = MutableSharedFlow()
+    val event: SharedFlow<UserEvent>
+        get() = _event.asSharedFlow()
 
     init {
         viewModelScope.launch {
@@ -58,26 +63,12 @@ class UserViewModel @Inject constructor(
     }
 
     fun signIn(token: String?) = viewModelScope.launch {
-        kotlin.runCatching {
-            signInUseCase(token).getOrThrow()
-        }.onSuccess {
-            getUser()
-            _signInEvent.emit(SignInEvent.Success)
-        }.onFailure {
-            getUser()
-            _signInEvent.emit(SignInEvent.Fail)
-        }
+        signInUseCase(token)
+        getUser()
+        _event.emit(UserEvent.SignIn)
     }
 
     private suspend fun getUser() {
         _user.emit(getUserUseCase(Unit).data.toUiState())
-    }
-
-    private fun User?.toUiState(): UserUiState {
-        return if (this != null) {
-            UserUiState.SignIn(this)
-        } else {
-            UserUiState.NotSignIn
-        }
     }
 }

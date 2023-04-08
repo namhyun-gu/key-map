@@ -1,6 +1,7 @@
 package io.github.namhyungu.keymap.data.source.remote
 
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
 import io.github.namhyungu.keymap.data.Key
@@ -12,9 +13,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 @ExperimentalCoroutinesApi
-class KeyRemoteDataSource internal constructor(
-    private val ref: CollectionReference,
-) : KeyDataSource {
+class KeyRemoteDataSource : KeyDataSource {
+
+    private val ref: CollectionReference
+        get() = FirebaseFirestore.getInstance().collection("key")
+
     override fun observeKeys(): Flow<List<Key>> {
         return ref.asFlow().map { it?.toObjects() ?: emptyList() }
     }

@@ -2,7 +2,6 @@ package io.github.namhyungu.keymap.di
 
 import android.content.Context
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.ktx.Firebase
 import dagger.Module
 import dagger.Provides
@@ -32,8 +31,8 @@ class DataModule {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Singleton
     @Provides
-    fun provideKeyDataSource(@KeyCollection collection: CollectionReference): KeyDataSource {
-        return KeyRemoteDataSource(collection)
+    fun provideKeyDataSource(): KeyDataSource {
+        return KeyRemoteDataSource()
     }
 
     @Singleton
